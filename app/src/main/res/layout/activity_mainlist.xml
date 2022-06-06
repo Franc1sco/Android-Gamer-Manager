@@ -1,0 +1,46 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:orientation="vertical">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#F44336"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        tools:showIn="@layout/activity_main">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="40dp"
+            android:text="Lista de Videojuegos"/>
+    </LinearLayout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:background="#F44336"
+        android:orientation="horizontal">
+
+        <Spinner
+            android:id="@+id/status_list"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:drawSelectorOnTop="true"
+            android:autofillHints="creditCardExpirationDate"
+            android:entries="@array/astatus_list" />
+        <Spinner
+            android:id="@+id/pla_id"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:drawSelectorOnTop="true"
+            android:entries="@array/pla_list" />
+
+
+    </LinearLayout>
+</LinearLayout>
