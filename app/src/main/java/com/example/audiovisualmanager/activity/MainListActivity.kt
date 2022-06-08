@@ -1,4 +1,4 @@
-package com.example.audiovisualmanager.view
+package com.example.audiovisualmanager.activity
 
 import android.R
 import android.graphics.Color
@@ -10,18 +10,13 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.audiovisualmanager.data.APIService
 import com.example.audiovisualmanager.data.DatabaseHelper
-import com.example.audiovisualmanager.data.GameModel
-import com.example.audiovisualmanager.data.RemoteDataMapper
 import com.example.audiovisualmanager.databinding.ActivityMainlistBinding
 import com.example.audiovisualmanager.model.Game
 import com.example.audiovisualmanager.utils.Constants
 import com.example.audiovisualmanager.utils.Constants.FINALIZADO
 import com.example.audiovisualmanager.utils.Constants.PENDIENTE
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.gson.GsonConverterFactory
+import com.example.audiovisualmanager.adapter.GameAdapter
 import java.util.*
 
 
@@ -48,13 +43,13 @@ class MainListActivity : AppCompatActivity() {
         binding.recyclerView.setHasFixedSize(true)
         listDataAdapter = ArrayList<Game>()
         listDataFullAdapter = ArrayList<Game>()
-        getGames()?.let { listDataAdapter.addAll(it.sortedBy { element -> element.name }) }
+        //getGames()?.let { listDataAdapter.addAll(it.sortedBy { element -> element.name }) }
         listDataAdapter.addAll(DatabaseHelper().generateGameList().sortedBy { it.name })
         listDataFullAdapter.addAll(listDataAdapter)
         adapter = GameAdapter(listDataAdapter)
         binding.recyclerView.adapter = adapter
 
-        binding.statusList.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
+        binding.statusList.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parentView: AdapterView<*>?,
                 selectedItemView: View,
@@ -63,22 +58,22 @@ class MainListActivity : AppCompatActivity() {
             ) {
                 when (position) {
                     Constants.ITEM_TODOS -> {
-                        FilterOnly(null)
+                        filterOnly(null)
                     }
                     Constants.ITEM_PENDIENTE -> {
-                        FilterOnly(PENDIENTE)
+                        filterOnly(PENDIENTE)
                     }
                     Constants.ITEM_FINALIZADO -> {
-                        FilterOnly(FINALIZADO)
+                        filterOnly(FINALIZADO)
                     }
                 }
             }
 
             override fun onNothingSelected(parentView: AdapterView<*>?) {}
-        })
+        }
     }
 
-    private fun FilterOnly(filter: String?) {
+    private fun filterOnly(filter: String?) {
         listDataAdapter.clear()
         if (filter != null) {
             for (i in listDataFullAdapter.indices) {
@@ -138,6 +133,7 @@ class MainListActivity : AppCompatActivity() {
         }
     }
 
+    /*
     fun getGames(): List<Game>? {
         var results: List<Game>? = null
         val apiService = getRetrofit().create(APIService::class.java)
@@ -164,5 +160,5 @@ class MainListActivity : AppCompatActivity() {
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
-    }
+    }*/
 }

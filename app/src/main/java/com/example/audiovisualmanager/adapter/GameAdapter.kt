@@ -1,4 +1,4 @@
-package com.example.audiovisualmanager.view
+package com.example.audiovisualmanager.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
