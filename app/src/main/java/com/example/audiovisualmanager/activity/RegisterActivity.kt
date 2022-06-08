@@ -24,9 +24,13 @@ class RegisterActivity : AppCompatActivity() {
                 Toast.makeText(this, "Please fill all the fields", Toast.LENGTH_SHORT).show()
             } else {
                 val user = User(name, pass)
-                dbHandler.addUser(user)
-                Toast.makeText(this, "User added successfully", Toast.LENGTH_SHORT).show()
-                finish()
+                if (dbHandler.checkUserExists(user.name)) {
+                    Toast.makeText(this, "User already exists", Toast.LENGTH_SHORT).show()
+                } else {
+                    dbHandler.addUser(user)
+                    Toast.makeText(this, "User registered successfully", Toast.LENGTH_SHORT).show()
+                    finish()
+                }
             }
         }
     }

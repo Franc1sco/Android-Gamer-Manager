@@ -53,7 +53,7 @@ class DatabaseManager(context: Context):
         if (username.isEmpty() || password.isEmpty()) {
             return false
         }
-        val bd = this.writableDatabase
+        val bd = this.readableDatabase
         val dbResponse = bd.rawQuery("select $NICK_USER from $TABLE_USER where $NICK_USER = '$username' and $PASSWORD_USER = '$password'", null)
 
         return dbResponse.count > 0.also {
@@ -61,4 +61,18 @@ class DatabaseManager(context: Context):
             dbResponse.close()
         }
     }
+
+    fun checkUserExists(username: String): Boolean {
+        if (username.isEmpty()) {
+            return false
+        }
+        val bd = this.readableDatabase
+        val dbResponse = bd.rawQuery("select $NICK_USER from $TABLE_USER where $NICK_USER = '$username'", null)
+
+        return dbResponse.count > 0.also {
+            bd.close()
+            dbResponse.close()
+        }
+    }
+
 }
