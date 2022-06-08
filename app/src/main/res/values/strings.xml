@@ -2,6 +2,7 @@
     <string name="app_name">Audiovisual Manager</string>
     <string-array name="astatus_list">
         <item>Status</item>
+        <item>Todos</item>
         <item>Pendientes</item>
         <item>Finalizados</item>
     </string-array>

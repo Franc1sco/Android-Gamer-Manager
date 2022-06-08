@@ -1,9 +1,10 @@
-package com.example.audiovisualmanager
+package com.example.audiovisualmanager.view
 
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.audiovisualmanager.data.DatabaseHelper
 import com.example.audiovisualmanager.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
