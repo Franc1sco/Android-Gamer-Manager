@@ -57,7 +57,7 @@ class AddGameActivity: AppCompatActivity() {
     }
 
     private fun loadStatusSpinner() {
-        val array = listOf("Status", Constants.PENDIENTE, Constants.FINALIZADO)
+        val array = listOf("Status", Constants.PENDIENTE, Constants.EN_PROCESO, Constants.FINALIZADO)
         binding.spinnerStatus.adapter = object : ArrayAdapter<String>(this, R.layout.simple_list_item_1, array) {
             override fun isEnabled(position: Int): Boolean {
                 return position != 0
@@ -80,7 +80,7 @@ class AddGameActivity: AppCompatActivity() {
     }
 
     private fun loadPlatformSpinner() {
-        val array = listOf("Plataforma", "PC", "XBOX", "PLAYSTATION")
+        val array = listOf("Plataforma", Constants.PC, Constants.PLAYSTATION, Constants.XBOX)
         binding.spinnerPlatform.adapter = object : ArrayAdapter<String>(this, R.layout.simple_list_item_1, array) {
             override fun isEnabled(position: Int): Boolean {
                 return position != 0

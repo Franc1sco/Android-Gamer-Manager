@@ -14,8 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.audiovisualmanager.databinding.ActivityMainlistBinding
 import com.example.audiovisualmanager.model.Game
 import com.example.audiovisualmanager.utils.Constants
-import com.example.audiovisualmanager.utils.Constants.FINALIZADO
-import com.example.audiovisualmanager.utils.Constants.PENDIENTE
 import com.example.audiovisualmanager.adapter.GameAdapter
 import com.example.audiovisualmanager.database.MysqlManager
 import java.util.*
@@ -67,11 +65,14 @@ class MainListActivity : AppCompatActivity() {
                     Constants.ITEM_TODOS -> {
                         filterOnly(null)
                     }
+                    Constants.ITEM_PROCESO -> {
+                        filterOnly(Constants.EN_PROCESO)
+                    }
                     Constants.ITEM_PENDIENTE -> {
-                        filterOnly(PENDIENTE)
+                        filterOnly(Constants.PENDIENTE)
                     }
                     Constants.ITEM_FINALIZADO -> {
-                        filterOnly(FINALIZADO)
+                        filterOnly(Constants.FINALIZADO)
                     }
                 }
             }
@@ -135,7 +136,7 @@ class MainListActivity : AppCompatActivity() {
     }
 
     private fun loadStatusSpinner() {
-        val array = listOf("Status", "Todos", "Pendiente", "Finalizado")
+        val array = listOf("Status", "Todos", Constants.PENDIENTE, Constants.EN_PROCESO, Constants.FINALIZADO)
         binding.statusList.adapter = object : ArrayAdapter<String>(this, R.layout.simple_list_item_1, array) {
             override fun isEnabled(position: Int): Boolean {
                 return position != 0
@@ -156,33 +157,4 @@ class MainListActivity : AppCompatActivity() {
             }
         }
     }
-
-    /*
-    fun getGames(): List<Game>? {
-        var results: List<Game>? = null
-        val apiService = getRetrofit().create(APIService::class.java)
-        try {
-            val call = apiService.getGames()
-            val heroes = call.body()
-            if(call.body()?.count != 0) {
-                results = RemoteDataMapper.mapListCharacterRestModelToCharacter(heroes?.results?.toList())
-            }else{
-
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-
-
-        return results
-    }
-
-    private fun getRetrofit(): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl("https://api.rawg.io")
-            .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .build()
-    }*/
 }

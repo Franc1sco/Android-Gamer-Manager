@@ -3,7 +3,8 @@ package com.example.audiovisualmanager.utils
 object Constants {
     val ITEM_TODOS = 1
     val ITEM_PENDIENTE = 2
-    val ITEM_FINALIZADO  = 3
+    val ITEM_PROCESO = 3
+    val ITEM_FINALIZADO  = 4
     const val PENDIENTE = "Pendiente"
     const val EN_PROCESO = "En proceso"
     const val FINALIZADO = "Finalizado"
