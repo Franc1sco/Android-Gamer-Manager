@@ -5,9 +5,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.audiovisualmanager.database.MysqlManager
-import com.example.audiovisualmanager.databinding.AddgameActivityBinding
 import com.example.audiovisualmanager.databinding.EdituserActivityBinding
-import com.example.audiovisualmanager.model.Game
 
 class EditUserActivity: AppCompatActivity() {
 

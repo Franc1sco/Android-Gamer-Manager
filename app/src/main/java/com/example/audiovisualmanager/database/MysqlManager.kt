@@ -201,9 +201,10 @@ class MysqlManager {
             while (resultSet?.next() == true) {
                 games.add(
                     Game(
-                    resultSet.getString(GAME_NAME),
-                    resultSet.getString(GAME_STATUS),
-                    resultSet.getString(GAME_PLATFORM)
+                        resultSet.getString(GAME_NAME),
+                        resultSet.getString(GAME_STATUS),
+                        resultSet.getString(GAME_PLATFORM),
+                        resultSet.getInt(ID)
                     )
                 )
             }
@@ -287,6 +288,104 @@ class MysqlManager {
         try {
             stmt = conn?.createStatement()
             val query = ("UPDATE $TABLE_USER SET $PASSWORD_USER = '$password' WHERE $ID = $userid")
+            stmt?.executeQuery(query)
+
+        } catch (ex: SQLException) {
+            // handle any errors
+            ex.printStackTrace()
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+        }
+    }
+
+    fun deleteGame(gameid: Int) {
+        var stmt: Statement? = null
+        try {
+            stmt = conn?.createStatement()
+            val query = ("DELETE FROM $TABLE_PENDING WHERE $ID = $gameid")
+            stmt?.executeQuery(query)
+
+        } catch (ex: SQLException) {
+            // handle any errors
+            ex.printStackTrace()
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+        }
+    }
+
+    fun updateGameById(game: Game, gameid: Int) {
+        var stmt: Statement? = null
+        try {
+            stmt = conn?.createStatement()
+            val query = ("UPDATE $TABLE_PENDING SET $GAME_NAME = '${game.name}', $GAME_PLATFORM = '${game.platform}', $GAME_STATUS = '${game.status}' WHERE $ID = $gameid")
+            stmt?.executeQuery(query)
+
+        } catch (ex: SQLException) {
+            // handle any errors
+            ex.printStackTrace()
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+        }
+    }
+
+    fun getGameById(gameid: Int): Game {
+        var stmt: Statement? = null
+        val resultSet: ResultSet? = null
+        var game = Game("", "", "", -1)
+        try {
+            stmt = conn?.createStatement()
+            val query = ("SELECT * FROM $TABLE_PENDING WHERE $ID = $gameid")
+            val resultSet = stmt?.executeQuery(query)
+
+            if (resultSet?.next() == true) {
+                game = Game(
+                    resultSet.getString(GAME_NAME),
+                    resultSet.getString(GAME_STATUS),
+                    resultSet.getString(GAME_PLATFORM),
+                    resultSet.getInt(ID)
+                )
+            }
+
+        } catch (ex: SQLException) {
+            // handle any errors
+            ex.printStackTrace()
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+            if (resultSet != null) {
+                try {
+                    resultSet.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+        }
+        return game
+    }
+
+    fun updateGame(game: Game) {
+        var stmt: Statement? = null
+        try {
+            stmt = conn?.createStatement()
+            val query = ("UPDATE $TABLE_PENDING SET $GAME_NAME = '${game.name}', $GAME_PLATFORM = '${game.platform}', $GAME_STATUS = '${game.status}' WHERE $ID = ${game.id}")
             stmt?.executeQuery(query)
 
         } catch (ex: SQLException) {

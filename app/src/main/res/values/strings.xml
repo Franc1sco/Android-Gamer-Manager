@@ -1,19 +1,9 @@
 <resources>
     <string name="app_name">Audiovisual Manager</string>
-    <string-array name="astatus_list">
-        <item>Status</item>
-        <item>Todos</item>
-        <item>Pendientes</item>
-        <item>Finalizados</item>
-    </string-array>
-    <string-array name="pla_list">
-        <item>Todos</item>
-        <item>PC</item>
-        <item>PlayStation</item>
-        <item>Xbox</item>
-    </string-array>
-    <string-array name="valor_list">
-        <item>Ascendente</item>
-        <item>Descendente</item>
-    </string-array>
+    <string name="alert_dialog_delete">ELIMINAR ENTRADA</string>
+    <string name="alert_dialog_confirm_delete">¿Quiere eliminar la siguiente entrada de su lista?</string>
+    <string name="alert_dialog_denied_delete">No eliminó la entrada</string>
+    <string name="alert_dialog_delete_confirmed">Entrada eliminada</string>
+    <string name="alert_dialog_no">NO</string>
+    <string name="alert_dialog_yes">SÍ</string>
 </resources>
