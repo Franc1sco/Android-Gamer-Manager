@@ -87,6 +87,14 @@ class MainListActivity : AppCompatActivity() {
             finish()
 
         }
+
+        binding.UserConfig.setOnClickListener{
+            val intent2= Intent (this ,EditUserActivity::class.java)
+            intent2.putExtra("USERID", userId)
+            startActivity(intent2)
+            finish()
+
+        }
     }
 
     private fun filterOnly(filter: String?) {

@@ -282,4 +282,24 @@ class MysqlManager {
         }
     }
 
+    fun updatePassword(userid: Int, password: String) {
+        var stmt: Statement? = null
+        try {
+            stmt = conn?.createStatement()
+            val query = ("UPDATE $TABLE_USER SET $PASSWORD_USER = '$password' WHERE $ID = $userid")
+            stmt?.executeQuery(query)
+
+        } catch (ex: SQLException) {
+            // handle any errors
+            ex.printStackTrace()
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+        }
+    }
+
 }
