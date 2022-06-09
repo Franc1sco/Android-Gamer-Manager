@@ -75,6 +75,8 @@ class MainListActivity : AppCompatActivity() {
                     .setNegativeButton(getString(R.string.alert_dialog_no)){ view, _ ->
                         Toast.makeText(this@MainListActivity,getString(R.string.alert_dialog_denied_delete), Toast.LENGTH_LONG).show()
                         view.dismiss()
+                        binding.recyclerView.setHasFixedSize(true)
+                        loadMainList()
                     }
 
                     .setPositiveButton(getString(R.string.alert_dialog_yes)){ view,_ ->
