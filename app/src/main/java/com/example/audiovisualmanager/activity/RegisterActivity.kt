@@ -4,18 +4,17 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.audiovisualmanager.database.DatabaseManager
+import com.example.audiovisualmanager.database.MysqlManager
 import com.example.audiovisualmanager.databinding.RegisterActivityBinding
 import com.example.audiovisualmanager.model.User
 
 class RegisterActivity : AppCompatActivity() {
-    private lateinit var dbHandler: DatabaseManager
+    private var dbHandler: MysqlManager = MysqlManager().getInstance()
     private lateinit var binding: RegisterActivityBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = RegisterActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        dbHandler = DatabaseManager(this)
 
         binding.buttonDoRegister.setOnClickListener {
             val name = binding.editTextUser.text.toString()

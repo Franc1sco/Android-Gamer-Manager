@@ -5,14 +5,15 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.audiovisualmanager.database.DatabaseManager
+import com.example.audiovisualmanager.database.MysqlManager
 import com.example.audiovisualmanager.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private lateinit var dbHandler: DatabaseManager
+    private var dbHandler: MysqlManager = MysqlManager().getInstance()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        dbHandler = DatabaseManager(this)
+        dbHandler.getConnection()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
