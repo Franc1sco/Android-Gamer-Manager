@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
@@ -14,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.audiovisualmanager.database.MysqlManager
 import com.example.audiovisualmanager.databinding.AddgameActivityBinding
 import com.example.audiovisualmanager.model.Game
+import com.example.audiovisualmanager.utils.Constants
 
 
 class AddGameActivity: AppCompatActivity() {
@@ -57,7 +57,7 @@ class AddGameActivity: AppCompatActivity() {
     }
 
     private fun loadStatusSpinner() {
-        val array = listOf("Status", "Todos", "Pendiente", "Finalizado")
+        val array = listOf("Status", Constants.PENDIENTE, Constants.FINALIZADO)
         binding.spinnerStatus.adapter = object : ArrayAdapter<String>(this, R.layout.simple_list_item_1, array) {
             override fun isEnabled(position: Int): Boolean {
                 return position != 0

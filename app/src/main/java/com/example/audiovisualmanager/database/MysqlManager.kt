@@ -189,7 +189,7 @@ class MysqlManager {
         return isValid
     }
 
-    fun getGamesPendingByUserid(userid: Int): Collection<Game> {
+    fun getGamesPendingByUserid(userid: Int): ArrayList<Game> {
         var stmt: Statement? = null
         val resultSet: ResultSet? = null
         val games = ArrayList<Game>()
@@ -199,8 +199,13 @@ class MysqlManager {
             val resultSet = stmt?.executeQuery(query)
 
             while (resultSet?.next() == true) {
-                games.add(Game(resultSet.getString(GAME_NAME),
-                    resultSet.getString(GAME_PLATFORM), resultSet.getString(GAME_STATUS)))
+                games.add(
+                    Game(
+                    resultSet.getString(GAME_NAME),
+                    resultSet.getString(GAME_STATUS),
+                    resultSet.getString(GAME_PLATFORM)
+                    )
+                )
             }
 
         } catch (ex: SQLException) {

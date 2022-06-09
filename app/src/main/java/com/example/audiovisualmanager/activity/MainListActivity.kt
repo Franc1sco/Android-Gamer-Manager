@@ -50,10 +50,9 @@ class MainListActivity : AppCompatActivity() {
         binding.recyclerView.setHasFixedSize(true)
         listDataAdapter = ArrayList<Game>()
         listDataFullAdapter = ArrayList<Game>()
+        listDataFullAdapter = dbHandler.getGamesPendingByUserid(userId)
         //getGames()?.let { listDataAdapter.addAll(it.sortedBy { element -> element.name }) }
-        val gameList = dbHandler.getGamesPendingByUserid(userId)
-        listDataAdapter.addAll(gameList)
-        listDataFullAdapter.addAll(listDataAdapter)
+        listDataAdapter.addAll(listDataFullAdapter)
         adapter = GameAdapter(listDataAdapter)
         binding.recyclerView.adapter = adapter
 
