@@ -1,59 +1,100 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".activity.MainActivity"
     android:orientation="vertical">
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#F44336"
         android:orientation="horizontal"
-        android:padding="8dp"
-        tools:showIn="@layout/activity_main">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        >
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
+            android:text="Lista de Videojuegos"
             android:textSize="40dp"
-            android:text="Lista de Videojuegos"/>
-    </LinearLayout>
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+            app:layout_constraintEnd_toEndOf="@id/clTitle"
+            app:layout_constraintStart_toStartOf="@id/clTitle"
+ />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clSubTitle"
         android:layout_width="match_parent"
         android:layout_height="20dp"
         android:background="#F44336"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerView"
+        app:layout_constraintTop_toBottomOf="@id/clTitle">
 
         <Spinner
             android:id="@+id/status_list"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:drawSelectorOnTop="true"
             android:autofillHints="creditCardExpirationDate"
-            android:entries="@array/astatus_list" />
+            android:drawSelectorOnTop="true"
+            android:entries="@array/astatus_list"
+            app:layout_constraintStart_toStartOf="parent" />
+
         <Spinner
             android:id="@+id/pla_id"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:drawSelectorOnTop="true"
-            android:entries="@array/pla_list" />
-    </LinearLayout>
+            android:entries="@array/pla_list"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/status_list" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="590dp"
         android:scrollbars="vertical"
-        />
+        app:layout_constraintBottom_toBottomOf="@+id/clEnd"
+        app:layout_constraintTop_toBottomOf="@+id/clSubTitle" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/AddGame"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clEnd"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:backgroundTint="#F44336"
-        android:layout_margin="16dp" />
-</LinearLayout>
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recyclerView"
+        tools:showIn="@layout/activity_main">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/UserConfig"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:backgroundTint="#F44336"
+            android:src="@drawable/ic_sharp_account_circle_24"
+            app:layout_constraintBottom_toBottomOf="@id/clEnd"
+
+            app:layout_constraintEnd_toEndOf="@id/clEnd"
+            app:layout_constraintTop_toTopOf="@id/clEnd" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/AddGame"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:backgroundTint="#F44336"
+            android:src="@drawable/ic_baseline_plus_one_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
