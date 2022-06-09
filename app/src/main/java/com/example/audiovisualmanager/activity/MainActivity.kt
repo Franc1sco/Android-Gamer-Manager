@@ -19,7 +19,10 @@ class MainActivity : AppCompatActivity() {
 
         binding.buttonLogin.setOnClickListener {
             if (dbHandler.isValidUser(binding.editTextUser.text.toString(), binding.editTextPassword.text.toString())) {
-                startActivity(Intent(this, MainListActivity::class.java))
+                val userId = dbHandler.getUserId(binding.editTextUser.text.toString())
+                val intent = Intent(this, MainListActivity::class.java)
+                intent.putExtra("USERID", userId)
+                startActivity(intent)
             } else {
                 Toast.makeText(this, "invalid user or password", Toast.LENGTH_SHORT).show()
             }

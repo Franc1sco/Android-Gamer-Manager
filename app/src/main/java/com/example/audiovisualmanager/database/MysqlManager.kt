@@ -5,6 +5,7 @@ import android.os.StrictMode.ThreadPolicy
 import com.example.audiovisualmanager.model.User
 import java.sql.*
 import java.util.*
+import com.example.audiovisualmanager.model.Game
 
 
 class MysqlManager {
@@ -15,11 +16,19 @@ class MysqlManager {
 
         //Declaramos los nombre de las tablas
         private const val TABLE_USER = "UserTable"
+        private const val TABLE_PENDING = "Games"
 
         //Declaramos los valores de las columnas
         //TABLA UserTable
+        private const val ID = "id"
         private const val NICK_USER = "nick"
         private const val PASSWORD_USER = "password"
+
+        //TABLA PENDING
+        private const val GAME_NAME = "name"
+        private const val GAME_PLATFORM = "platform"
+        private const val GAME_STATUS = "status"
+        private const val GAME_USERID = "userid"
     }
 
     fun getInstance(): MysqlManager {
@@ -61,9 +70,18 @@ class MysqlManager {
 
         try {
             stmt = conn?.createStatement()
-            val query = ("CREATE TABLE IF NOT EXISTS " + TABLE_USER + "("
+            var query = ("CREATE TABLE IF NOT EXISTS " + TABLE_USER + "("
+                    + ID + " INT NOT NULL AUTO_INCREMENT PRIMARY KEY, "
                     + NICK_USER + " varchar(64) NOT NULL,"
                     + PASSWORD_USER + " varchar(64) NOT NULL" + ")")
+            stmt?.executeQuery(query)
+
+            query = ("CREATE TABLE IF NOT EXISTS " + TABLE_PENDING + "("
+                    + ID + " INT NOT NULL AUTO_INCREMENT PRIMARY KEY, "
+                    + GAME_NAME + " varchar(64) NOT NULL,"
+                    + GAME_PLATFORM + " varchar(64) NOT NULL,"
+                    + GAME_STATUS + " varchar(64) NOT NULL,"
+                    + GAME_USERID + " INT NOT NULL" + ")")
             stmt?.executeQuery(query)
 
         } catch (ex: SQLException) {
@@ -169,7 +187,94 @@ class MysqlManager {
         }
 
         return isValid
+    }
 
+    fun getGamesPendingByUserid(userid: Int): Collection<Game> {
+        var stmt: Statement? = null
+        val resultSet: ResultSet? = null
+        val games = ArrayList<Game>()
+        try {
+            stmt = conn?.createStatement()
+            val query = ("SELECT * FROM $TABLE_PENDING WHERE $GAME_USERID = $userid")
+            val resultSet = stmt?.executeQuery(query)
+
+            while (resultSet?.next() == true) {
+                games.add(Game(resultSet.getString(GAME_NAME),
+                    resultSet.getString(GAME_PLATFORM), resultSet.getString(GAME_STATUS)))
+            }
+
+        } catch (ex: SQLException) {
+            // handle any errors
+            ex.printStackTrace()
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+            if (resultSet != null) {
+                try {
+                    resultSet.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+        }
+        return games
+    }
+
+    fun getUserId(username: String): Int {
+        var stmt: Statement? = null
+        val resultSet: ResultSet? = null
+        var userid = -1
+        try {
+            stmt = conn?.createStatement()
+            val query = ("SELECT $ID FROM $TABLE_USER WHERE $NICK_USER = '$username'")
+            val resultSet = stmt?.executeQuery(query)
+
+            if (resultSet?.next() == true) {
+                userid = resultSet.getInt(ID)
+            }
+
+        } catch (ex: SQLException) {
+            // handle any errors
+            ex.printStackTrace()
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+            if (resultSet != null) {
+                try {
+                    resultSet.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+        }
+        return userid
+
+    }
+
+    fun addGameByUserid(game: Game, userid: Int) {
+        var stmt: Statement? = null
+        try {
+            stmt = conn?.createStatement()
+            val query = ("INSERT INTO $TABLE_PENDING ($GAME_NAME, $GAME_PLATFORM, $GAME_STATUS, $GAME_USERID) VALUES ('${game.name}', '${game.platform}', '${game.status}', $userid)")
+            stmt?.executeQuery(query)
+
+        } catch (ex: SQLException) {
+            // handle any errors
+            ex.printStackTrace()
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+        }
     }
 
 }

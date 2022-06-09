@@ -1,6 +1,7 @@
 package com.example.audiovisualmanager.activity
 
 import android.R
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
@@ -10,13 +11,13 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.audiovisualmanager.data.DatabaseHelper
 import com.example.audiovisualmanager.databinding.ActivityMainlistBinding
 import com.example.audiovisualmanager.model.Game
 import com.example.audiovisualmanager.utils.Constants
 import com.example.audiovisualmanager.utils.Constants.FINALIZADO
 import com.example.audiovisualmanager.utils.Constants.PENDIENTE
 import com.example.audiovisualmanager.adapter.GameAdapter
+import com.example.audiovisualmanager.database.MysqlManager
 import java.util.*
 
 
@@ -24,11 +25,17 @@ class MainListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainlistBinding
     private lateinit var listDataAdapter: ArrayList<Game>
     private lateinit var listDataFullAdapter: ArrayList<Game>
+    private var dbHandler: MysqlManager = MysqlManager().getInstance()
     private lateinit var adapter: GameAdapter
+    private var userId: Int = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainlistBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        if(intent.hasExtra("USERID")){
+            userId=intent.getIntExtra("USERID", 0)
+        }
 
         loadStatusSpinner()
         loadOrderSpinner()
@@ -44,7 +51,8 @@ class MainListActivity : AppCompatActivity() {
         listDataAdapter = ArrayList<Game>()
         listDataFullAdapter = ArrayList<Game>()
         //getGames()?.let { listDataAdapter.addAll(it.sortedBy { element -> element.name }) }
-        listDataAdapter.addAll(DatabaseHelper().generateGameList().sortedBy { it.name })
+        val gameList = dbHandler.getGamesPendingByUserid(userId)
+        listDataAdapter.addAll(gameList)
         listDataFullAdapter.addAll(listDataAdapter)
         adapter = GameAdapter(listDataAdapter)
         binding.recyclerView.adapter = adapter
@@ -70,6 +78,15 @@ class MainListActivity : AppCompatActivity() {
             }
 
             override fun onNothingSelected(parentView: AdapterView<*>?) {}
+        }
+
+        binding.AddGame.setOnClickListener{
+
+            val intent2= Intent (this ,AddGameActivity::class.java)
+            intent2.putExtra("USERID", userId)
+            startActivity(intent2)
+            finish()
+
         }
     }
 

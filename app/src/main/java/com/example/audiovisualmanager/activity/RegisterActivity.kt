@@ -3,7 +3,6 @@ package com.example.audiovisualmanager.activity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.audiovisualmanager.database.DatabaseManager
 import com.example.audiovisualmanager.database.MysqlManager
 import com.example.audiovisualmanager.databinding.RegisterActivityBinding
 import com.example.audiovisualmanager.model.User
@@ -33,5 +32,4 @@ class RegisterActivity : AppCompatActivity() {
             }
         }
     }
-
 }
