@@ -102,4 +102,11 @@ class AddGameActivity: AppCompatActivity() {
         }
     }
 
+    @Override
+    override fun onBackPressed() {
+        val intent2= Intent (this ,MainListActivity::class.java)
+        intent2.putExtra("USERID", userId)
+        startActivity(intent2)
+        finish()
+    }
 }
