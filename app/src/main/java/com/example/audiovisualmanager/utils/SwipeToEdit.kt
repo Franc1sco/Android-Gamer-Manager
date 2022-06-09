@@ -18,12 +18,6 @@ abstract class SwipeToEdit(context: Context) : ItemTouchHelper.SimpleCallback(0,
     private val backgroundColor = Color.parseColor("#24AE05")
     private val clearPaint = Paint().apply { xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR) }
 
-
-    override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
-        if (viewHolder.adapterPosition == 10) return 0
-        return super.getMovementFlags(recyclerView, viewHolder)
-    }
-
     override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
         return false
     }
