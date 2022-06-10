@@ -6,4 +6,12 @@
     <string name="alert_dialog_delete_confirmed">Entrada eliminada</string>
     <string name="alert_dialog_no">NO</string>
     <string name="alert_dialog_yes">SÍ</string>
+    <string name="image_content_description">Imagen</string>
+    <string name="alert_dialog_choose">Elija una acción</string>
+    <string name="alert_dialog_choose_picture">Elegir una imagen de la galería</string>
+    <string name="alert_dialog_choose_camera">Elegir una foto de la cámara</string>
+    <string name="error_add_image">Ha habido un error</string>
+    <string name="request_permission">No diste permiso para acceder a tus imágenes, puedes cambiarlo en ajustes de usuario del sistema</string>
+    <string name="go_settings">Ve a los ajustes</string>
+    <string name="button_cancel">Cancelar</string>
 </resources>

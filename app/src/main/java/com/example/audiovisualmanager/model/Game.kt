@@ -5,5 +5,6 @@ data class Game(
     val status: String,
     val platform: String,
     val id: Int,
+    val image: String? = null,
     val description: String? = null
 )

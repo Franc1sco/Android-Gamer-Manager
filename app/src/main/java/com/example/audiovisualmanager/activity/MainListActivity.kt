@@ -146,7 +146,7 @@ class MainListActivity : AppCompatActivity() {
         listDataFullAdapter = ArrayList<Game>()
         listDataFullAdapter = dbHandler.getGamesPendingByUserid(userId)
         listDataAdapter.addAll(listDataFullAdapter)
-        adapter = GameAdapter(listDataAdapter)
+        adapter = GameAdapter(listDataAdapter, context = this)
         binding.recyclerView.adapter = adapter
     }
 

@@ -6,36 +6,40 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.audiovisualmanager.activity.AddGameActivity
 import com.example.audiovisualmanager.database.MysqlManager
-import com.example.audiovisualmanager.databinding.ItemListBinding
+import com.example.audiovisualmanager.databinding.ItemMainScreenAdapterBinding
 import com.example.audiovisualmanager.model.Game
 
-class GameAdapter(listData: ArrayList<Game>) :
+class GameAdapter(listData: ArrayList<Game>, context: Context) :
     RecyclerView.Adapter<GameAdapter.ViewHolderDatos>() {
     var listData: ArrayList<Game> = listData
+    var context: Context = context
     private var dbHandler: MysqlManager = MysqlManager().getInstance()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderDatos {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val itemListBinding: ItemListBinding =
-            ItemListBinding.inflate(layoutInflater, parent, false)
+        val itemListBinding: ItemMainScreenAdapterBinding =
+            ItemMainScreenAdapterBinding.inflate(layoutInflater, parent, false)
         return ViewHolderDatos(itemListBinding)
     }
 
     override fun onBindViewHolder(holder: ViewHolderDatos, position: Int) {
         val game: Game = listData[position]
-        holder.itemListBinding.game = game
-        holder.itemListBinding.executePendingBindings()
+        holder.itemListBinding.tvName.text = game.name
+        holder.itemListBinding.tvStatus.text = game.status
+        holder.itemListBinding.tvPlatform.text = game.platform
+        if (game.image.isNullOrEmpty().not())
+            Glide.with(context).load(game.image).into(holder.itemListBinding.ivGameImage)
     }
 
     override fun getItemCount(): Int {
         return listData.size
     }
 
-    class ViewHolderDatos(itemListBinding: ItemListBinding) :
+    class ViewHolderDatos(itemListBinding: ItemMainScreenAdapterBinding) :
         RecyclerView.ViewHolder(itemListBinding.root) {
-        var itemListBinding: ItemListBinding = itemListBinding
-
+        var itemListBinding: ItemMainScreenAdapterBinding = itemListBinding
     }
 
     fun removeAt(position: Int){

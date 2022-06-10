@@ -16,7 +16,7 @@ class MysqlManager {
 
         //Declaramos los nombre de las tablas
         private const val TABLE_USER = "UserTable"
-        private const val TABLE_PENDING = "Games"
+        private const val TABLE_USERGAMES = "UserGames"
 
         //Declaramos los valores de las columnas
         //TABLA UserTable
@@ -29,6 +29,7 @@ class MysqlManager {
         private const val GAME_PLATFORM = "platform"
         private const val GAME_STATUS = "status"
         private const val GAME_USERID = "userid"
+        private const val GAME_IMAGE = "image"
     }
 
     fun getInstance(): MysqlManager {
@@ -76,11 +77,12 @@ class MysqlManager {
                     + PASSWORD_USER + " varchar(64) NOT NULL" + ")")
             stmt?.executeQuery(query)
 
-            query = ("CREATE TABLE IF NOT EXISTS " + TABLE_PENDING + "("
+            query = ("CREATE TABLE IF NOT EXISTS " + TABLE_USERGAMES + "("
                     + ID + " INT NOT NULL AUTO_INCREMENT PRIMARY KEY, "
                     + GAME_NAME + " varchar(64) NOT NULL,"
                     + GAME_PLATFORM + " varchar(64) NOT NULL,"
                     + GAME_STATUS + " varchar(64) NOT NULL,"
+                    + GAME_IMAGE + " varchar(255),"
                     + GAME_USERID + " INT NOT NULL" + ")")
             stmt?.executeQuery(query)
 
@@ -195,7 +197,7 @@ class MysqlManager {
         val games = ArrayList<Game>()
         try {
             stmt = conn?.createStatement()
-            val query = ("SELECT * FROM $TABLE_PENDING WHERE $GAME_USERID = $userid")
+            val query = ("SELECT * FROM $TABLE_USERGAMES WHERE $GAME_USERID = $userid")
             val resultSet = stmt?.executeQuery(query)
 
             while (resultSet?.next() == true) {
@@ -204,7 +206,8 @@ class MysqlManager {
                         resultSet.getString(GAME_NAME),
                         resultSet.getString(GAME_STATUS),
                         resultSet.getString(GAME_PLATFORM),
-                        resultSet.getInt(ID)
+                        resultSet.getInt(ID),
+                        resultSet.getString(GAME_IMAGE),
                     )
                 )
             }
@@ -267,8 +270,10 @@ class MysqlManager {
         var stmt: Statement? = null
         try {
             stmt = conn?.createStatement()
-            val query = ("INSERT INTO $TABLE_PENDING ($GAME_NAME, $GAME_PLATFORM, $GAME_STATUS, $GAME_USERID) VALUES ('${game.name}', '${game.platform}', '${game.status}', $userid)")
-            stmt?.executeQuery(query)
+            if(game.image.isNullOrEmpty())
+                stmt?.executeQuery("INSERT INTO $TABLE_USERGAMES ($GAME_NAME, $GAME_PLATFORM, $GAME_STATUS, $GAME_USERID) VALUES ('${game.name}', '${game.platform}', '${game.status}', $userid)")
+            else
+                stmt?.executeQuery("INSERT INTO $TABLE_USERGAMES ($GAME_NAME, $GAME_PLATFORM, $GAME_STATUS, $GAME_IMAGE, $GAME_USERID) VALUES ('${game.name}', '${game.platform}', '${game.status}', '${game.image}', $userid)")
 
         } catch (ex: SQLException) {
             // handle any errors
@@ -307,27 +312,7 @@ class MysqlManager {
         var stmt: Statement? = null
         try {
             stmt = conn?.createStatement()
-            val query = ("DELETE FROM $TABLE_PENDING WHERE $ID = $gameid")
-            stmt?.executeQuery(query)
-
-        } catch (ex: SQLException) {
-            // handle any errors
-            ex.printStackTrace()
-        } finally {
-            if (stmt != null) {
-                try {
-                    stmt.close()
-                } catch (sqlEx: SQLException) {
-                }
-            }
-        }
-    }
-
-    fun updateGameById(game: Game, gameid: Int) {
-        var stmt: Statement? = null
-        try {
-            stmt = conn?.createStatement()
-            val query = ("UPDATE $TABLE_PENDING SET $GAME_NAME = '${game.name}', $GAME_PLATFORM = '${game.platform}', $GAME_STATUS = '${game.status}' WHERE $ID = $gameid")
+            val query = ("DELETE FROM $TABLE_USERGAMES WHERE $ID = $gameid")
             stmt?.executeQuery(query)
 
         } catch (ex: SQLException) {
@@ -349,7 +334,7 @@ class MysqlManager {
         var game = Game("", "", "", -1)
         try {
             stmt = conn?.createStatement()
-            val query = ("SELECT * FROM $TABLE_PENDING WHERE $ID = $gameid")
+            val query = ("SELECT * FROM $TABLE_USERGAMES WHERE $ID = $gameid")
             val resultSet = stmt?.executeQuery(query)
 
             if (resultSet?.next() == true) {
@@ -357,7 +342,8 @@ class MysqlManager {
                     resultSet.getString(GAME_NAME),
                     resultSet.getString(GAME_STATUS),
                     resultSet.getString(GAME_PLATFORM),
-                    resultSet.getInt(ID)
+                    resultSet.getInt(ID),
+                    resultSet.getString(GAME_IMAGE),
                 )
             }
 
@@ -385,8 +371,11 @@ class MysqlManager {
         var stmt: Statement? = null
         try {
             stmt = conn?.createStatement()
-            val query = ("UPDATE $TABLE_PENDING SET $GAME_NAME = '${game.name}', $GAME_PLATFORM = '${game.platform}', $GAME_STATUS = '${game.status}' WHERE $ID = ${game.id}")
-            stmt?.executeQuery(query)
+            if (game.image.isNullOrEmpty()) {
+                stmt?.executeQuery("UPDATE $TABLE_USERGAMES SET $GAME_NAME = '${game.name}', $GAME_PLATFORM = '${game.platform}', $GAME_STATUS = '${game.status}', $GAME_IMAGE = '' WHERE $ID = ${game.id}")
+            } else {
+                stmt?.executeQuery("UPDATE $TABLE_USERGAMES SET $GAME_NAME = '${game.name}', $GAME_PLATFORM = '${game.platform}', $GAME_STATUS = '${game.status}', $GAME_IMAGE = '${game.image}' WHERE $ID = ${game.id}")
+            }
 
         } catch (ex: SQLException) {
             // handle any errors
