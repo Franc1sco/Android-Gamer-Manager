@@ -136,6 +136,7 @@ class AddGameActivity: AppCompatActivity() {
         if (game.image.isNullOrEmpty().not()) {
             binding.editTextGameImage.setText(game.image)
             Glide.with(this).load(game.image).into(binding.imageViewGame)
+            imageLoaded = true
         }
     }
 
