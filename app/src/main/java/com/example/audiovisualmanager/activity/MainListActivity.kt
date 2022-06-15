@@ -123,6 +123,19 @@ class MainListActivity : AppCompatActivity() {
             override fun onNothingSelected(parentView: AdapterView<*>?) {}
         }
 
+        binding.orderList.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parentView: AdapterView<*>?,
+                selectedItemView: View,
+                position: Int,
+                id: Long
+            ) {
+                listOrderBy(position)
+            }
+
+            override fun onNothingSelected(parentView: AdapterView<*>?) {}
+        }
+
         binding.AddGame.setOnClickListener{
 
             val intent2= Intent (this ,AddGameActivity::class.java)
@@ -141,10 +154,52 @@ class MainListActivity : AppCompatActivity() {
         }
     }
 
+    private fun listOrderBy(position: Int) {
+        if (position == 0) {
+            return
+        }
+        binding.recyclerView.setHasFixedSize(true)
+        listDataAdapter = ArrayList<Game>()
+        listDataFullAdapter = ArrayList<Game>()
+        when (position) {
+            Constants.ITEM_NOMBRE -> {
+                listDataFullAdapter = dbHandler.getGamesPendingByUserid(userId, "name")
+            }
+            Constants.ITEM_PLATAFORMA -> {
+                listDataFullAdapter = dbHandler.getGamesPendingByUserid(userId, "platform")
+            }
+            Constants.ITEM_COMPANY -> {
+                listDataFullAdapter = dbHandler.getGamesPendingByUserid(userId, "company")
+            }
+            Constants.ITEM_GENERO -> {
+                listDataFullAdapter = dbHandler.getGamesPendingByUserid(userId, "genre")
+            }
+            Constants.ITEM_VALORACION -> {
+                listDataFullAdapter = dbHandler.getGamesPendingByUserid(userId, "valoration")
+            }
+        }
+        listDataAdapter.addAll(listDataFullAdapter)
+        adapter = GameAdapter(listDataAdapter, context = this)
+        binding.recyclerView.adapter = adapter
+
+        val filterValue = binding.statusList.selectedItemPosition
+        when (filterValue) {
+            Constants.ITEM_PROCESO -> {
+                filterOnly(Constants.EN_PROCESO)
+            }
+            Constants.ITEM_PENDIENTE -> {
+                filterOnly(Constants.PENDIENTE)
+            }
+            Constants.ITEM_FINALIZADO -> {
+                filterOnly(Constants.FINALIZADO)
+            }
+        }
+    }
+
     private fun loadMainList() {
         listDataAdapter = ArrayList<Game>()
         listDataFullAdapter = ArrayList<Game>()
-        listDataFullAdapter = dbHandler.getGamesPendingByUserid(userId)
+        listDataFullAdapter = dbHandler.getGamesPendingByUserid(userId, "name")
         listDataAdapter.addAll(listDataFullAdapter)
         adapter = GameAdapter(listDataAdapter, context = this)
         binding.recyclerView.adapter = adapter
@@ -165,8 +220,8 @@ class MainListActivity : AppCompatActivity() {
     }
 
     private fun loadOrderSpinner() {
-        val array = listOf("Orden", "Plataforma", "Studio", "Género", "Valoración")
-        binding.plaId.adapter = object : ArrayAdapter<String>(this, R.layout.simple_list_item_1, array) {
+        val array = listOf("Orden", "Nombre", "Plataforma", "Compañia", "Género", "Valoración")
+        binding.orderList.adapter = object : ArrayAdapter<String>(this, R.layout.simple_list_item_1, array) {
             override fun isEnabled(position: Int): Boolean {
                 return position != 0
             }

@@ -29,8 +29,49 @@ class GameAdapter(listData: ArrayList<Game>, context: Context) :
         holder.itemListBinding.tvName.text = game.name
         holder.itemListBinding.tvStatus.text = game.status
         holder.itemListBinding.tvPlatform.text = game.platform
-        if (game.image.isNullOrEmpty().not())
-            Glide.with(context).load(game.image).into(holder.itemListBinding.ivGameImage)
+        if (game.image.isNullOrEmpty().not()) Glide.with(context).load(game.image).into(holder.itemListBinding.ivGameImage)
+
+        setupRate(holder, game.valoration)
+    }
+
+    private fun setupRate(holder: GameAdapter.ViewHolderDatos, valoration: Int) {
+        when (valoration) {
+            1 -> {
+                holder.itemListBinding.ivStar1.setImageResource(android.R.drawable.star_big_on)
+                holder.itemListBinding.ivStar2.setImageResource(android.R.drawable.star_big_off)
+                holder.itemListBinding.ivStar3.setImageResource(android.R.drawable.star_big_off)
+                holder.itemListBinding.ivStar4.setImageResource(android.R.drawable.star_big_off)
+                holder.itemListBinding.ivStar5.setImageResource(android.R.drawable.star_big_off)
+            }
+            2 -> {
+                holder.itemListBinding.ivStar1.setImageResource(android.R.drawable.star_big_on)
+                holder.itemListBinding.ivStar2.setImageResource(android.R.drawable.star_big_on)
+                holder.itemListBinding.ivStar3.setImageResource(android.R.drawable.star_big_off)
+                holder.itemListBinding.ivStar4.setImageResource(android.R.drawable.star_big_off)
+                holder.itemListBinding.ivStar5.setImageResource(android.R.drawable.star_big_off)
+            }
+            3 -> {
+                holder.itemListBinding.ivStar1.setImageResource(android.R.drawable.star_big_on)
+                holder.itemListBinding.ivStar2.setImageResource(android.R.drawable.star_big_on)
+                holder.itemListBinding.ivStar3.setImageResource(android.R.drawable.star_big_on)
+                holder.itemListBinding.ivStar4.setImageResource(android.R.drawable.star_big_off)
+                holder.itemListBinding.ivStar5.setImageResource(android.R.drawable.star_big_off)
+            }
+            4 -> {
+                holder.itemListBinding.ivStar1.setImageResource(android.R.drawable.star_big_on)
+                holder.itemListBinding.ivStar2.setImageResource(android.R.drawable.star_big_on)
+                holder.itemListBinding.ivStar3.setImageResource(android.R.drawable.star_big_on)
+                holder.itemListBinding.ivStar4.setImageResource(android.R.drawable.star_big_on)
+                holder.itemListBinding.ivStar5.setImageResource(android.R.drawable.star_big_off)
+            }
+            5 -> {
+                holder.itemListBinding.ivStar1.setImageResource(android.R.drawable.star_big_on)
+                holder.itemListBinding.ivStar2.setImageResource(android.R.drawable.star_big_on)
+                holder.itemListBinding.ivStar3.setImageResource(android.R.drawable.star_big_on)
+                holder.itemListBinding.ivStar4.setImageResource(android.R.drawable.star_big_on)
+                holder.itemListBinding.ivStar5.setImageResource(android.R.drawable.star_big_on)
+            }
+        }
     }
 
     override fun getItemCount(): Int {

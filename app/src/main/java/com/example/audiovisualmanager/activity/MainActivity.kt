@@ -17,8 +17,17 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.buttonLogin.setOnClickListener {
-            if (dbHandler.isValidUser(binding.editTextUser.text.toString(), binding.editTextPassword.text.toString())) {
+            val isValidUser = dbHandler.isValidUser(binding.editTextUser.text.toString(), binding.editTextPassword.text.toString())
+            if (isValidUser == null) {
+                Toast.makeText(this, "Error on mysql connection, restart app and try again", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (isValidUser) {
                 val userId = dbHandler.getUserId(binding.editTextUser.text.toString())
+                if (userId == null) {
+                    Toast.makeText(this, "Error on mysql connection, restart app and try again", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
                 val intent = Intent(this, MainListActivity::class.java)
                 intent.putExtra("USERID", userId)
                 startActivity(intent)

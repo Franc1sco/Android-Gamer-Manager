@@ -60,6 +60,48 @@
         android:textSize="20sp"
         android:autofillHints="" />
 
+        <EditText
+            android:id="@+id/editTextGameCompany"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:hint="Compañia"
+            android:inputType="text"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:autofillHints="" />
+
+        <EditText
+            android:id="@+id/editTextGameGenre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:hint="Género"
+            android:inputType="text"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:autofillHints="" />
+
+        <Spinner
+            android:id="@+id/spinnerPoints"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:textSize="20sp"
+            android:autofillHints="" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="80dp"

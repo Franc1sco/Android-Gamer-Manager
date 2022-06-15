@@ -48,7 +48,7 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <Spinner
-            android:id="@+id/pla_id"
+            android:id="@+id/order_list"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:drawSelectorOnTop="true"

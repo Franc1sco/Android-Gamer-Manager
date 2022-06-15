@@ -27,6 +27,9 @@ class MysqlManager {
         //TABLA PENDING
         private const val GAME_NAME = "name"
         private const val GAME_PLATFORM = "platform"
+        private const val GAME_GENRE = "genre"
+        private const val GAME_COMPANY = "company"
+        private const val GAME_POINTS = "valoration"
         private const val GAME_STATUS = "status"
         private const val GAME_USERID = "userid"
         private const val GAME_IMAGE = "image"
@@ -82,6 +85,9 @@ class MysqlManager {
                     + GAME_NAME + " varchar(64) NOT NULL,"
                     + GAME_PLATFORM + " varchar(64) NOT NULL,"
                     + GAME_STATUS + " varchar(64) NOT NULL,"
+                    + GAME_GENRE + " varchar(64) NOT NULL,"
+                    + GAME_COMPANY + " varchar(64) NOT NULL,"
+                    + GAME_POINTS + " INT NOT NULL,"
                     + GAME_IMAGE + " varchar(255),"
                     + GAME_USERID + " INT NOT NULL" + ")")
             stmt?.executeQuery(query)
@@ -99,11 +105,11 @@ class MysqlManager {
         }
     }
 
-    fun isValidUser(username: String, password: String): Boolean {
+    fun isValidUser(username: String, password: String): Boolean? {
         if (username.isEmpty() || password.isEmpty()) {
             return false
         }
-        var isValid = false
+        var isValid: Boolean? = null
         var stmt: Statement? = null
         val resultSet: ResultSet? = null
 
@@ -191,13 +197,16 @@ class MysqlManager {
         return isValid
     }
 
-    fun getGamesPendingByUserid(userid: Int): ArrayList<Game> {
+    fun getGamesPendingByUserid(userid: Int, order: String? = null): ArrayList<Game> {
         var stmt: Statement? = null
         val resultSet: ResultSet? = null
         val games = ArrayList<Game>()
         try {
             stmt = conn?.createStatement()
-            val query = ("SELECT * FROM $TABLE_USERGAMES WHERE $GAME_USERID = $userid")
+            var query = ("SELECT * FROM $TABLE_USERGAMES WHERE $GAME_USERID = $userid")
+            if (order != null) {
+                query += " ORDER BY $order DESC"
+            }
             val resultSet = stmt?.executeQuery(query)
 
             while (resultSet?.next() == true) {
@@ -207,6 +216,9 @@ class MysqlManager {
                         resultSet.getString(GAME_STATUS),
                         resultSet.getString(GAME_PLATFORM),
                         resultSet.getInt(ID),
+                        resultSet.getString(GAME_COMPANY),
+                        resultSet.getString(GAME_GENRE),
+                        resultSet.getInt(GAME_POINTS),
                         resultSet.getString(GAME_IMAGE),
                     )
                 )
@@ -232,10 +244,10 @@ class MysqlManager {
         return games
     }
 
-    fun getUserId(username: String): Int {
+    fun getUserId(username: String): Int? {
         var stmt: Statement? = null
         val resultSet: ResultSet? = null
-        var userid = -1
+        var userid: Int? = null
         try {
             stmt = conn?.createStatement()
             val query = ("SELECT $ID FROM $TABLE_USER WHERE $NICK_USER = '$username'")
@@ -268,12 +280,11 @@ class MysqlManager {
 
     fun addGameByUserid(game: Game, userid: Int) {
         var stmt: Statement? = null
+        val image = if(game.image.isNullOrEmpty()) "" else game.image
         try {
             stmt = conn?.createStatement()
-            if(game.image.isNullOrEmpty())
-                stmt?.executeQuery("INSERT INTO $TABLE_USERGAMES ($GAME_NAME, $GAME_PLATFORM, $GAME_STATUS, $GAME_USERID) VALUES ('${game.name}', '${game.platform}', '${game.status}', $userid)")
-            else
-                stmt?.executeQuery("INSERT INTO $TABLE_USERGAMES ($GAME_NAME, $GAME_PLATFORM, $GAME_STATUS, $GAME_IMAGE, $GAME_USERID) VALUES ('${game.name}', '${game.platform}', '${game.status}', '${game.image}', $userid)")
+            stmt?.executeQuery("INSERT INTO $TABLE_USERGAMES ($GAME_NAME, $GAME_PLATFORM, $GAME_STATUS, $GAME_IMAGE, $GAME_USERID, $GAME_COMPANY, $GAME_GENRE," +
+                    "$GAME_POINTS) VALUES ('${game.name}', '${game.platform}', '${game.status}', '$image', $userid, '${game.company}', '${game.genre}', ${game.valoration})")
 
         } catch (ex: SQLException) {
             // handle any errors
@@ -328,10 +339,10 @@ class MysqlManager {
         }
     }
 
-    fun getGameById(gameid: Int): Game {
+    fun getGameById(gameid: Int): Game? {
         var stmt: Statement? = null
         val resultSet: ResultSet? = null
-        var game = Game("", "", "", -1)
+        var game: Game? = null
         try {
             stmt = conn?.createStatement()
             val query = ("SELECT * FROM $TABLE_USERGAMES WHERE $ID = $gameid")
@@ -343,6 +354,9 @@ class MysqlManager {
                     resultSet.getString(GAME_STATUS),
                     resultSet.getString(GAME_PLATFORM),
                     resultSet.getInt(ID),
+                    resultSet.getString(GAME_COMPANY),
+                    resultSet.getString(GAME_GENRE),
+                    resultSet.getInt(GAME_POINTS),
                     resultSet.getString(GAME_IMAGE),
                 )
             }
@@ -369,13 +383,11 @@ class MysqlManager {
 
     fun updateGame(game: Game) {
         var stmt: Statement? = null
+        val image = if(game.image.isNullOrEmpty()) "" else game.image
         try {
             stmt = conn?.createStatement()
-            if (game.image.isNullOrEmpty()) {
-                stmt?.executeQuery("UPDATE $TABLE_USERGAMES SET $GAME_NAME = '${game.name}', $GAME_PLATFORM = '${game.platform}', $GAME_STATUS = '${game.status}', $GAME_IMAGE = '' WHERE $ID = ${game.id}")
-            } else {
-                stmt?.executeQuery("UPDATE $TABLE_USERGAMES SET $GAME_NAME = '${game.name}', $GAME_PLATFORM = '${game.platform}', $GAME_STATUS = '${game.status}', $GAME_IMAGE = '${game.image}' WHERE $ID = ${game.id}")
-            }
+            stmt?.executeQuery("UPDATE $TABLE_USERGAMES SET $GAME_NAME = '${game.name}', $GAME_PLATFORM = '${game.platform}', $GAME_STATUS = '${game.status}', " +
+                    "$GAME_IMAGE = '$image', $GAME_COMPANY = '${game.company}', $GAME_GENRE = '${game.genre}', $GAME_POINTS = ${game.valoration} WHERE $ID = ${game.id}")
 
         } catch (ex: SQLException) {
             // handle any errors

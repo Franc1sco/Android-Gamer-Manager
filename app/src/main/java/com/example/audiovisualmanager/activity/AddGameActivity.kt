@@ -42,6 +42,7 @@ class AddGameActivity: AppCompatActivity() {
 
         loadStatusSpinner()
         loadPlatformSpinner()
+        loadPointsSpinner()
         loadImageSelector()
         if (gameId > 0) loadEditGame()
 
@@ -56,8 +57,13 @@ class AddGameActivity: AppCompatActivity() {
                 binding.spinnerPlatform.selectedItemPosition <= 0 -> {
                     Toast.makeText(this, "Please select a platform", Toast.LENGTH_SHORT).show()
                 }
+                binding.editTextGameCompany.text.isEmpty() -> {
+                    Toast.makeText(this, "Please enter a Company name", Toast.LENGTH_SHORT).show()
+                }
+                binding.editTextGameGenre.text.isEmpty() -> {
+                    Toast.makeText(this, "Please enter a Genre name", Toast.LENGTH_SHORT).show()
+                }
                 else -> {
-
                     if (gameId > 0) {
                         updateGame()
                     } else {
@@ -109,7 +115,11 @@ class AddGameActivity: AppCompatActivity() {
         dbHandler.addGameByUserid(Game(
             binding.editTextGameName.text.toString(),
             binding.spinnerStatus.selectedItem.toString(),
-            binding.spinnerPlatform.selectedItem.toString(), 0, imageUrl),
+            binding.spinnerPlatform.selectedItem.toString(), 0,
+            binding.editTextGameCompany.text.toString(),
+            binding.editTextGameGenre.text.toString(),
+            binding.spinnerPoints.selectedItem.toString().toInt(), // todo arreglar esto
+            imageUrl),
             userId
         )
     }
@@ -123,15 +133,26 @@ class AddGameActivity: AppCompatActivity() {
             Game(
                 binding.editTextGameName.text.toString(),
                 binding.spinnerStatus.selectedItem.toString(),
-                binding.spinnerPlatform.selectedItem.toString(), gameId, imageUrl)
+                binding.spinnerPlatform.selectedItem.toString(), gameId,
+                binding.editTextGameCompany.text.toString(),
+                binding.editTextGameGenre.text.toString(),
+                binding.spinnerPoints.selectedItem.toString().toInt(), // todo arreglar esto
+                imageUrl)
         )
     }
 
     private fun loadEditGame() {
         val game = dbHandler.getGameById(gameId)
-        binding.editTextGameName.setText(game.name)
-        binding.spinnerStatus.setSelection(getIndexStatus(binding.spinnerStatus, game.status))
-        binding.spinnerPlatform.setSelection(getIndexPlatform(binding.spinnerPlatform, game.platform))
+        if (game == null) {
+            // showerror msg connection
+            return
+        }
+        binding.editTextGameName.setText(game?.name)
+        binding.spinnerStatus.setSelection(getIndexSpinner(binding.spinnerStatus, game.status))
+        binding.spinnerPlatform.setSelection(getIndexSpinner(binding.spinnerPlatform, game.platform))
+        binding.spinnerPoints.setSelection(getIndexSpinner(binding.spinnerPoints, game.valoration.toString()))
+        binding.editTextGameCompany.setText(game?.company)
+        binding.editTextGameGenre.setText(game?.genre)
         binding.buttonDoRegister.text = "Actualizar Juego"
         if (game.image.isNullOrEmpty().not()) {
             binding.editTextGameImage.setText(game.image)
@@ -140,18 +161,9 @@ class AddGameActivity: AppCompatActivity() {
         }
     }
 
-    private fun getIndexStatus(spinner: Spinner, status: Any): Int {
+    private fun getIndexSpinner(spinner: Spinner, status: Any): Int {
         for (i in 0 until spinner.count) {
             if (spinner.getItemAtPosition(i).toString() == status) {
-                return i
-            }
-        }
-        return 0
-    }
-
-    private fun getIndexPlatform(spinner: Spinner, platform: Any): Int {
-        for (i in 0 until spinner.count) {
-            if (spinner.getItemAtPosition(i).toString() == platform) {
                 return i
             }
         }
@@ -184,6 +196,29 @@ class AddGameActivity: AppCompatActivity() {
     private fun loadPlatformSpinner() {
         val array = listOf("Plataforma", Constants.PC, Constants.PLAYSTATION, Constants.XBOX)
         binding.spinnerPlatform.adapter = object : ArrayAdapter<String>(this, R.layout.simple_list_item_1, array) {
+            override fun isEnabled(position: Int): Boolean {
+                return position != 0
+            }
+            override fun getDropDownView(
+                position: Int,
+                convertView: View?,
+                parent: ViewGroup
+            ): View {
+                val view = super.getDropDownView(position, convertView, parent)
+                val element = view as TextView
+                if (position == 0) {
+                    element.setTextColor(Color.GRAY)
+                } else {
+                    element.setTextColor(Color.BLACK)
+                }
+                return view
+            }
+        }
+    }
+
+    private fun loadPointsSpinner() {
+        val array = listOf("Valoración", "1", "2", "3", "4", "5")
+        binding.spinnerPoints.adapter = object : ArrayAdapter<String>(this, R.layout.simple_list_item_1, array) {
             override fun isEnabled(position: Int): Boolean {
                 return position != 0
             }
