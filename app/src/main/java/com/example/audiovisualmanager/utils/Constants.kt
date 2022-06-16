@@ -16,4 +16,5 @@ object Constants {
     const val PLAYSTATION = "Playstation"
     const val XBOX = "Xbox"
     const val PC = "PC"
+    const val TYPE_TEXT_VARIATION_PASSWORD = 129
 }

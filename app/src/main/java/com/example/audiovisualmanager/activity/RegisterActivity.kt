@@ -1,11 +1,13 @@
 package com.example.audiovisualmanager.activity
 
 import android.os.Bundle
+import android.text.InputType
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.audiovisualmanager.database.MysqlManager
 import com.example.audiovisualmanager.databinding.RegisterActivityBinding
 import com.example.audiovisualmanager.model.User
+import com.example.audiovisualmanager.utils.Constants
 
 class RegisterActivity : AppCompatActivity() {
     private var dbHandler: MysqlManager = MysqlManager().getInstance()
@@ -16,8 +18,8 @@ class RegisterActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.buttonDoRegister.setOnClickListener {
-            val name = binding.editTextUser.text.toString()
-            val pass = binding.editTextPassword.text.toString()
+            val name = binding.editTextUserRegister.text.toString()
+            val pass = binding.editTextPasswordRegister.text.toString()
             if (name.isEmpty() || pass.isEmpty()) {
                 Toast.makeText(this, "Please fill all the fields", Toast.LENGTH_SHORT).show()
             } else {
@@ -29,6 +31,14 @@ class RegisterActivity : AppCompatActivity() {
                     Toast.makeText(this, "User registered successfully", Toast.LENGTH_SHORT).show()
                     finish()
                 }
+            }
+        }
+
+        binding.cbShowPasswordRegister.setOnClickListener {
+            if (binding.cbShowPasswordRegister.isChecked) {
+                binding.editTextPasswordRegister.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+            } else {
+                binding.editTextPasswordRegister.inputType = Constants.TYPE_TEXT_VARIATION_PASSWORD
             }
         }
     }
