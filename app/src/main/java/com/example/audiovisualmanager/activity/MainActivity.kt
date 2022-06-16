@@ -3,7 +3,6 @@ package com.example.audiovisualmanager.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
 import android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -14,7 +13,6 @@ import com.example.audiovisualmanager.utils.Constants
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var dbHandler: MysqlManager = MysqlManager().getInstance()
-    private var saveSession = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         dbHandler.getConnection()
@@ -54,10 +52,6 @@ class MainActivity : AppCompatActivity() {
             } else {
                 binding.editTextPassword.inputType = Constants.TYPE_TEXT_VARIATION_PASSWORD
             }
-        }
-
-        binding.checkBoxSaveSession.setOnClickListener {
-            saveSession = binding.checkBoxSaveSession.isChecked
         }
     }
 
