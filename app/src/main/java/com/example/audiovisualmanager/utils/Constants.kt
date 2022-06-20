@@ -10,6 +10,8 @@ object Constants {
     val ITEM_COMPANY = 3
     val ITEM_GENERO = 4
     val ITEM_VALORACION  = 5
+    val ITEM_PUBLIC = 1
+    val ITEM_PRIVATE = 2
     const val PENDIENTE = "Pendiente"
     const val EN_PROCESO = "En proceso"
     const val FINALIZADO = "Finalizado"

@@ -12,19 +12,17 @@ import com.example.audiovisualmanager.database.MysqlManager
 import com.example.audiovisualmanager.databinding.ItemMainScreenAdapterBinding
 import com.example.audiovisualmanager.model.Game
 
-class GameAdapter(listData: ArrayList<Game>, context: Context) :
-    RecyclerView.Adapter<GameAdapter.ViewHolderDatos>() {
-    var listData: ArrayList<Game> = listData
-    var context: Context = context
+class GameAdapter(private var listData: ArrayList<Game>, var context: Context) :
+    RecyclerView.Adapter<GameAdapter.ViewHolderData>() {
     private var dbHandler: MysqlManager = MysqlManager().getInstance()
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderDatos {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderData {
         val layoutInflater = LayoutInflater.from(parent.context)
         val itemListBinding: ItemMainScreenAdapterBinding =
             ItemMainScreenAdapterBinding.inflate(layoutInflater, parent, false)
-        return ViewHolderDatos(itemListBinding)
+        return ViewHolderData(itemListBinding)
     }
 
-    override fun onBindViewHolder(holder: ViewHolderDatos, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolderData, position: Int) {
         val game: Game = listData[position]
         holder.itemListBinding.tvName.text = game.name
         holder.itemListBinding.tvStatus.text = game.status
@@ -34,7 +32,7 @@ class GameAdapter(listData: ArrayList<Game>, context: Context) :
         setupRate(holder, game.valoration)
     }
 
-    private fun setupRate(holder: GameAdapter.ViewHolderDatos, valoration: Int) {
+    private fun setupRate(holder: GameAdapter.ViewHolderData, valoration: Int) {
         when (valoration) {
             1 -> {
                 holder.itemListBinding.ivStar1.setImageResource(android.R.drawable.star_big_on)
@@ -78,7 +76,7 @@ class GameAdapter(listData: ArrayList<Game>, context: Context) :
         return listData.size
     }
 
-    class ViewHolderDatos(itemListBinding: ItemMainScreenAdapterBinding) :
+    class ViewHolderData(itemListBinding: ItemMainScreenAdapterBinding) :
         RecyclerView.ViewHolder(itemListBinding.root) {
         var itemListBinding: ItemMainScreenAdapterBinding = itemListBinding
     }

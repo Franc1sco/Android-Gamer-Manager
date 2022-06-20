@@ -32,6 +32,8 @@ class MainListActivity : AppCompatActivity() {
     private var dbHandler: MysqlManager = MysqlManager().getInstance()
     private lateinit var adapter: GameAdapter
     private var userId: Int = 0
+    private var isViewer: Boolean = false
+    private var viewerName = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainlistBinding.inflate(layoutInflater)
@@ -41,8 +43,23 @@ class MainListActivity : AppCompatActivity() {
             userId=intent.getIntExtra("USERID", 0)
         }
 
-        loadStatusSpinner()
-        loadOrderSpinner()
+        if(intent.hasExtra("ISVIEWER")){
+            isViewer=intent.getBooleanExtra("ISVIEWER", false)
+        }
+        if(intent.hasExtra("VIEWERNAME")){
+            viewerName=intent.getStringExtra("VIEWERNAME") ?: ""
+        }
+        if (!isViewer) {
+            loadStatusSpinner()
+            loadOrderSpinner()
+        } else {
+            binding.AddGame.visibility = View.INVISIBLE
+            binding.AddGame.isEnabled = false
+            binding.UserConfig.visibility = View.INVISIBLE
+            binding.UserConfig.isEnabled = false
+            binding.clSubTitle.visibility = View.GONE
+            binding.tvTitle.text = "Viendo a $viewerName"
+        }
         setupAdapter()
     }
 
@@ -53,6 +70,8 @@ class MainListActivity : AppCompatActivity() {
         )
         binding.recyclerView.setHasFixedSize(true)
         loadMainList()
+
+        if (isViewer) return
 
         val editSwipeHandler = object : SwipeToEdit(this) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {

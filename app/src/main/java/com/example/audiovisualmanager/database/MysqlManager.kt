@@ -23,6 +23,7 @@ class MysqlManager {
         private const val ID = "id"
         private const val NICK_USER = "nick"
         private const val PASSWORD_USER = "password"
+        private const val PRIVATE_USER = "private"
 
         //TABLA PENDING
         private const val GAME_NAME = "name"
@@ -76,8 +77,10 @@ class MysqlManager {
             stmt = conn?.createStatement()
             var query = ("CREATE TABLE IF NOT EXISTS " + TABLE_USER + "("
                     + ID + " INT NOT NULL AUTO_INCREMENT PRIMARY KEY, "
-                    + NICK_USER + " varchar(64) NOT NULL,"
-                    + PASSWORD_USER + " varchar(64) NOT NULL" + ")")
+                    + NICK_USER + " varchar(64) NOT NULL, "
+                    + PASSWORD_USER + " varchar(64) NOT NULL, "
+                    + PRIVATE_USER + " INT NOT NULL DEFAULT 0"
+                    + ")")
             stmt?.executeQuery(query)
 
             query = ("CREATE TABLE IF NOT EXISTS " + TABLE_USERGAMES + "("
@@ -299,11 +302,13 @@ class MysqlManager {
         }
     }
 
-    fun updatePassword(userid: Int, password: String) {
+    fun updateUser(userid: Int, password: String, private : Boolean) {
         var stmt: Statement? = null
         try {
             stmt = conn?.createStatement()
-            val query = ("UPDATE $TABLE_USER SET $PASSWORD_USER = '$password' WHERE $ID = $userid")
+            val isPrivate = if(private) 1 else 0
+            val query = ("UPDATE $TABLE_USER SET $PASSWORD_USER = '$password', $PRIVATE_USER = $isPrivate WHERE $ID = $userid")
+
             stmt?.executeQuery(query)
 
         } catch (ex: SQLException) {
@@ -400,6 +405,45 @@ class MysqlManager {
                 }
             }
         }
+    }
+
+    fun getUserList(exception: Int): ArrayList<User> {
+        var stmt: Statement? = null
+        val resultSet: ResultSet? = null
+        val users = ArrayList<User>()
+        try {
+            stmt = conn?.createStatement()
+            val query = ("SELECT * FROM $TABLE_USER" +
+                    " WHERE $ID != $exception")
+            val resultSet = stmt?.executeQuery(query)
+
+            while (resultSet?.next() == true) {
+                users.add(User(
+                    resultSet.getString(NICK_USER),
+                    resultSet.getString(PASSWORD_USER),
+                    resultSet.getInt(PRIVATE_USER),
+                    resultSet.getInt(ID)
+                ))
+            }
+
+        } catch (ex: SQLException) {
+            // handle any errors
+            ex.printStackTrace()
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+            if (resultSet != null) {
+                try {
+                    resultSet.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+        }
+        return users
     }
 
 }
