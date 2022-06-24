@@ -1,17 +1,20 @@
 <resources>
-    <string name="app_name">Audiovisual Manager</string>
+    <string name="app_name">Gamer Manager</string>
     <string name="alert_dialog_delete">ELIMINAR ENTRADA</string>
     <string name="alert_dialog_confirm_delete">¿Quiere eliminar la siguiente entrada de su lista?</string>
     <string name="alert_dialog_denied_delete">No eliminó la entrada</string>
     <string name="alert_dialog_delete_confirmed">Entrada eliminada</string>
     <string name="alert_dialog_no">NO</string>
     <string name="alert_dialog_yes">SÍ</string>
-    <string name="image_content_description">Imagen</string>
-    <string name="alert_dialog_choose">Elija una acción</string>
-    <string name="alert_dialog_choose_picture">Elegir una imagen de la galería</string>
-    <string name="alert_dialog_choose_camera">Elegir una foto de la cámara</string>
-    <string name="error_add_image">Ha habido un error</string>
-    <string name="request_permission">No diste permiso para acceder a tus imágenes, puedes cambiarlo en ajustes de usuario del sistema</string>
-    <string name="go_settings">Ve a los ajustes</string>
-    <string name="button_cancel">Cancelar</string>
+    <string name="introducir_imagen">Por favor introduzca una imagen de juego</string>
+    <string name="no_imagen">Image not found</string>
+    <string name="connection_error">Error de conexion, prueba a reiniciar la app</string>
+    <string name="error_game_name_empty">Por favor introduzca un nombre</string>
+    <string name="update_game">Actualizar Juego</string>
+    <string name="viewto">Viendo a %1$s</string>
+    <string name="password_updated">Contraseña Actualizada</string>
+    <string name="password_dont_match">Las contraseñas no coinciden</string>
+    <string name="fill_all_fields">Please fill all the fields</string>
+    <string name="user_already_extis">User already exists</string>
+    <string name="user_registered_success">User registered successfully</string>
 </resources>

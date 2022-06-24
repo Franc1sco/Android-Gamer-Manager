@@ -11,6 +11,7 @@ import com.example.audiovisualmanager.activity.AddGameActivity
 import com.example.audiovisualmanager.database.MysqlManager
 import com.example.audiovisualmanager.databinding.ItemMainScreenAdapterBinding
 import com.example.audiovisualmanager.model.Game
+import com.example.audiovisualmanager.utils.Utils
 
 class GameAdapter(private var listData: ArrayList<Game>, var context: Context) :
     RecyclerView.Adapter<GameAdapter.ViewHolderData>() {
@@ -32,7 +33,7 @@ class GameAdapter(private var listData: ArrayList<Game>, var context: Context) :
         setupRate(holder, game.valoration)
     }
 
-    private fun setupRate(holder: GameAdapter.ViewHolderData, valoration: Int) {
+    private fun setupRate(holder: ViewHolderData, valoration: Int) {
         when (valoration) {
             1 -> {
                 holder.itemListBinding.ivStar1.setImageResource(android.R.drawable.star_big_on)
@@ -76,13 +77,15 @@ class GameAdapter(private var listData: ArrayList<Game>, var context: Context) :
         return listData.size
     }
 
-    class ViewHolderData(itemListBinding: ItemMainScreenAdapterBinding) :
+    class ViewHolderData(var itemListBinding: ItemMainScreenAdapterBinding) :
         RecyclerView.ViewHolder(itemListBinding.root) {
-        var itemListBinding: ItemMainScreenAdapterBinding = itemListBinding
     }
 
     fun removeAt(position: Int){
-        dbHandler.deleteGame(listData[position].id)
+        if (!dbHandler.deleteGame(listData[position].id)) {
+            Utils.connectionError(context)
+            return
+        }
         listData.removeAt(position)
         notifyItemRemoved(position)
     }

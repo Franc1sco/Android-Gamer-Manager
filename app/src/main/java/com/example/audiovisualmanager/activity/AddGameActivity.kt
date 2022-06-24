@@ -3,7 +3,6 @@ package com.example.audiovisualmanager.activity
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +19,7 @@ import com.example.audiovisualmanager.database.MysqlManager
 import com.example.audiovisualmanager.databinding.AddgameActivityBinding
 import com.example.audiovisualmanager.model.Game
 import com.example.audiovisualmanager.utils.Constants
+import com.example.audiovisualmanager.utils.Utils
 
 
 class AddGameActivity: AppCompatActivity() {
@@ -49,19 +49,19 @@ class AddGameActivity: AppCompatActivity() {
         binding.buttonDoRegister.setOnClickListener{
             when {
                 binding.editTextGameName.text.isEmpty() -> {
-                    Toast.makeText(this, "Please enter a game name", Toast.LENGTH_SHORT).show()
+                    Utils.showMessage(this, getString(R.string.error_game_name_empty))
                 }
                 binding.spinnerStatus.selectedItemPosition <= 0 -> {
-                    Toast.makeText(this, "Please select a status", Toast.LENGTH_SHORT).show()
+                    Utils.showMessage(this, "Please select a status")
                 }
                 binding.spinnerPlatform.selectedItemPosition <= 0 -> {
-                    Toast.makeText(this, "Please select a platform", Toast.LENGTH_SHORT).show()
+                    Utils.showMessage(this, "Please select a platform")
                 }
                 binding.editTextGameCompany.text.isEmpty() -> {
-                    Toast.makeText(this, "Please enter a Company name", Toast.LENGTH_SHORT).show()
+                    Utils.showMessage(this, "Please enter a Company name")
                 }
                 binding.editTextGameGenre.text.isEmpty() -> {
-                    Toast.makeText(this, "Please enter a Genre name", Toast.LENGTH_SHORT).show()
+                    Utils.showMessage(this, "Please enter a Genre name")
                 }
                 else -> {
                     if (gameId > 0) {
@@ -81,30 +81,40 @@ class AddGameActivity: AppCompatActivity() {
     }
 
     private fun loadImageSelector() {
-        binding.buttonLoadImage.setOnClickListener(View.OnClickListener {
+        binding.buttonLoadImage.setOnClickListener {
             if (binding.editTextGameImage.text.isEmpty()) {
-                Toast.makeText(this, "Please enter a game image", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.introducir_imagen), Toast.LENGTH_SHORT)
+                    .show()
             } else {
-               Glide.with(this).load(binding.editTextGameImage.text.toString()).addListener(object : RequestListener<Drawable> {
-                    override fun onLoadFailed(e: GlideException?, model: Any?,
-                                              target: com.bumptech.glide.request.target.Target<Drawable>?,
-                                              isFirstResource: Boolean): Boolean {
-                        Toast.makeText(this@AddGameActivity, "Image not found", Toast.LENGTH_SHORT).show()
-                        imageLoaded = false
-                        return false
-                    }
+                Glide.with(this).load(binding.editTextGameImage.text.toString())
+                    .addListener(object : RequestListener<Drawable> {
+                        override fun onLoadFailed(
+                            e: GlideException?, model: Any?,
+                            target: com.bumptech.glide.request.target.Target<Drawable>?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            Toast.makeText(
+                                this@AddGameActivity,
+                                getString(R.string.no_imagen),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            imageLoaded = false
+                            return false
+                        }
 
-                    override fun onResourceReady(resource: Drawable?,
-                                                 model: Any?,
-                                                 target: com.bumptech.glide.request.target.Target<Drawable>?,
-                                                 dataSource: com.bumptech.glide.load.DataSource?,
-                                                 isFirstResource: Boolean): Boolean {
-                        imageLoaded = true
-                        return false
-                    }
-                }).into(binding.imageViewGame)
+                        override fun onResourceReady(
+                            resource: Drawable?,
+                            model: Any?,
+                            target: com.bumptech.glide.request.target.Target<Drawable>?,
+                            dataSource: com.bumptech.glide.load.DataSource?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            imageLoaded = true
+                            return false
+                        }
+                    }).into(binding.imageViewGame)
             }
-        })
+        }
     }
 
     private fun addGame() {
@@ -112,16 +122,18 @@ class AddGameActivity: AppCompatActivity() {
         if (binding.editTextGameImage.text.isNotEmpty() && imageLoaded) {
             imageUrl = binding.editTextGameImage.text.toString()
         }
-        dbHandler.addGameByUserid(Game(
+        if (!dbHandler.addGameByUserid(Game(
             binding.editTextGameName.text.toString(),
             binding.spinnerStatus.selectedItem.toString(),
             binding.spinnerPlatform.selectedItem.toString(), 0,
             binding.editTextGameCompany.text.toString(),
             binding.editTextGameGenre.text.toString(),
-            binding.spinnerPoints.selectedItem.toString().toInt(), // todo arreglar esto
+            binding.spinnerPoints.selectedItem.toString().toInt(),
             imageUrl),
             userId
-        )
+        )) {
+            Utils.connectionError(this)
+        }
     }
 
     private fun updateGame() {
@@ -129,31 +141,33 @@ class AddGameActivity: AppCompatActivity() {
         if (binding.editTextGameImage.text.isNotEmpty() && imageLoaded) {
             imageUrl = binding.editTextGameImage.text.toString()
         }
-        dbHandler.updateGame(
+        if (!dbHandler.updateGame(
             Game(
                 binding.editTextGameName.text.toString(),
                 binding.spinnerStatus.selectedItem.toString(),
                 binding.spinnerPlatform.selectedItem.toString(), gameId,
                 binding.editTextGameCompany.text.toString(),
                 binding.editTextGameGenre.text.toString(),
-                binding.spinnerPoints.selectedItem.toString().toInt(), // todo arreglar esto
+                binding.spinnerPoints.selectedItem.toString().toInt(),
                 imageUrl)
-        )
+        )) {
+            Utils.connectionError(this)
+        }
     }
 
     private fun loadEditGame() {
         val game = dbHandler.getGameById(gameId)
         if (game == null) {
-            // showerror msg connection
+            Utils.connectionError(this)
             return
         }
-        binding.editTextGameName.setText(game?.name)
+        binding.editTextGameName.setText(game.name)
         binding.spinnerStatus.setSelection(getIndexSpinner(binding.spinnerStatus, game.status))
         binding.spinnerPlatform.setSelection(getIndexSpinner(binding.spinnerPlatform, game.platform))
         binding.spinnerPoints.setSelection(getIndexSpinner(binding.spinnerPoints, game.valoration.toString()))
-        binding.editTextGameCompany.setText(game?.company)
-        binding.editTextGameGenre.setText(game?.genre)
-        binding.buttonDoRegister.text = "Actualizar Juego"
+        binding.editTextGameCompany.setText(game.company)
+        binding.editTextGameGenre.setText(game.genre)
+        binding.buttonDoRegister.text = getString(R.string.update_game)
         if (game.image.isNullOrEmpty().not()) {
             binding.editTextGameImage.setText(game.image)
             Glide.with(this).load(game.image).into(binding.imageViewGame)

@@ -12,6 +12,7 @@ import com.example.audiovisualmanager.database.MysqlManager
 import com.example.audiovisualmanager.databinding.UserlistActivityBinding
 import com.example.audiovisualmanager.model.User
 import com.example.audiovisualmanager.utils.Constants
+import com.example.audiovisualmanager.utils.Utils
 import java.util.ArrayList
 
 class UserListActivity : AppCompatActivity() {
@@ -34,7 +35,7 @@ class UserListActivity : AppCompatActivity() {
 
     private fun setupUpStatusSpinner() {
         binding.statusList.adapter =
-            ArrayAdapter(this, R.layout.simple_spinner_item, arrayOf("Todos", "Público", "Privado"))
+            ArrayAdapter(this, R.layout.simple_spinner_item, resources.getStringArray(com.example.audiovisualmanager.R.array.user_status_array_all))
 
         binding.statusList.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
@@ -78,6 +79,11 @@ class UserListActivity : AppCompatActivity() {
     }
 
     private fun setupAdapter() {
+        val userList = dbHandler.getUserList(userId)
+        if (userList == null) {
+            Utils.connectionError(this)
+            return
+        }
         binding.recyclerView.layoutManager = LinearLayoutManager(
             this,
             LinearLayoutManager.VERTICAL, false
@@ -85,7 +91,7 @@ class UserListActivity : AppCompatActivity() {
         binding.recyclerView.setHasFixedSize(true)
         listDataAdapter = ArrayList<User>()
         listDataFullAdapter = ArrayList<User>()
-        listDataFullAdapter = dbHandler.getUserList(userId)
+        listDataFullAdapter = userList
         listDataAdapter.addAll(listDataFullAdapter)
         adapter = UserAdapter(listDataAdapter)
         binding.recyclerView.adapter = adapter

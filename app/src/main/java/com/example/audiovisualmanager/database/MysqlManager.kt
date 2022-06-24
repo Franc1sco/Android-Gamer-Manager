@@ -17,6 +17,7 @@ class MysqlManager {
         //Declaramos los nombre de las tablas
         private const val TABLE_USER = "UserTable"
         private const val TABLE_USERGAMES = "UserGames"
+        private const val TABLE_GAMES = "Games"
 
         //Declaramos los valores de las columnas
         //TABLA UserTable
@@ -24,6 +25,9 @@ class MysqlManager {
         private const val NICK_USER = "nick"
         private const val PASSWORD_USER = "password"
         private const val PRIVATE_USER = "private"
+
+        private const val GAMEID = "gameid"
+        private const val GAMEVALIDATED = "validated"
 
         //TABLA PENDING
         private const val GAME_NAME = "name"
@@ -34,6 +38,8 @@ class MysqlManager {
         private const val GAME_STATUS = "status"
         private const val GAME_USERID = "userid"
         private const val GAME_IMAGE = "image"
+
+
     }
 
     fun getInstance(): MysqlManager {
@@ -70,7 +76,7 @@ class MysqlManager {
         }
     }
 
-    fun executeMySQLQueryCreation() {
+    private fun executeMySQLQueryCreation() {
         var stmt: Statement? = null
 
         try {
@@ -84,15 +90,20 @@ class MysqlManager {
             stmt?.executeQuery(query)
 
             query = ("CREATE TABLE IF NOT EXISTS " + TABLE_USERGAMES + "("
-                    + ID + " INT NOT NULL AUTO_INCREMENT PRIMARY KEY, "
-                    + GAME_NAME + " varchar(64) NOT NULL,"
-                    + GAME_PLATFORM + " varchar(64) NOT NULL,"
+                    + GAMEID + " INT NOT NULL, "
                     + GAME_STATUS + " varchar(64) NOT NULL,"
+                    + GAME_POINTS + " INT NOT NULL,"
+                    + GAME_PLATFORM + " varchar(64) NOT NULL,"
+                    + GAME_USERID + " INT NOT NULL" + ")")
+            stmt?.executeQuery(query)
+
+            query = ("CREATE TABLE IF NOT EXISTS " + TABLE_GAMES + "("
+                    + GAMEID + " INT NOT NULL AUTO_INCREMENT PRIMARY KEY, "
+                    + GAME_NAME + " varchar(64) NOT NULL,"
                     + GAME_GENRE + " varchar(64) NOT NULL,"
                     + GAME_COMPANY + " varchar(64) NOT NULL,"
-                    + GAME_POINTS + " INT NOT NULL,"
-                    + GAME_IMAGE + " varchar(255),"
-                    + GAME_USERID + " INT NOT NULL" + ")")
+                    + GAMEVALIDATED + " INT NOT NULL DEFAULT 0,"
+                    + GAME_IMAGE + " varchar(255)" + ")")
             stmt?.executeQuery(query)
 
         } catch (ex: SQLException) {
@@ -114,14 +125,14 @@ class MysqlManager {
         }
         var isValid: Boolean? = null
         var stmt: Statement? = null
-        val resultSet: ResultSet? = null
+        var queryResults: ResultSet? = null
 
         try {
             stmt = conn?.createStatement()
             val query = ("SELECT $NICK_USER FROM $TABLE_USER WHERE $NICK_USER = '$username' AND $PASSWORD_USER = '$password'")
-            val resultSet = stmt?.executeQuery(query)
+            queryResults = stmt?.executeQuery(query)
 
-            isValid = resultSet?.next() == true
+            isValid = queryResults?.next() == true
 
         } catch (ex: SQLException) {
             // handle any errors
@@ -133,9 +144,9 @@ class MysqlManager {
                 } catch (sqlEx: SQLException) {
                 }
             }
-            if (resultSet != null) {
+            if (queryResults != null) {
                 try {
-                    resultSet.close()
+                    queryResults.close()
                 } catch (sqlEx: SQLException) {
                 }
             }
@@ -144,15 +155,16 @@ class MysqlManager {
         return isValid
     }
 
-    fun addUser(user: User) {
+    fun addUser(user: User): Boolean {
         var stmt: Statement? = null
+        var noError = true
         try {
             stmt = conn?.createStatement()
             val query = ("INSERT INTO $TABLE_USER ($NICK_USER, $PASSWORD_USER) VALUES ('${user.name}', '${user.password}')")
             stmt?.executeQuery(query)
 
         } catch (ex: SQLException) {
-            // handle any errors
+            noError = false
             ex.printStackTrace()
         } finally {
             if (stmt != null) {
@@ -162,20 +174,21 @@ class MysqlManager {
                 }
             }
         }
+        return noError
     }
 
-    fun checkUserExists(username: String): Boolean {
+    fun checkUserExists(username: String): Boolean? {
         if (username.isEmpty()) {
             return false
         }
-        var isValid = false
+        var isValid: Boolean? = null
         var stmt: Statement? = null
-        val resultSet: ResultSet? = null
+        var resultSet: ResultSet? = null
 
         try {
             stmt = conn?.createStatement()
             val query = ("SELECT $NICK_USER FROM $TABLE_USER WHERE $NICK_USER = '$username'")
-            val resultSet = stmt?.executeQuery(query)
+            resultSet = stmt?.executeQuery(query)
 
             isValid = resultSet?.next() == true
 
@@ -200,25 +213,29 @@ class MysqlManager {
         return isValid
     }
 
-    fun getGamesPendingByUserid(userid: Int, order: String? = null): ArrayList<Game> {
+    fun getGamesPendingByUserid(userid: Int, order: String? = null): ArrayList<Game>? {
         var stmt: Statement? = null
-        val resultSet: ResultSet? = null
-        val games = ArrayList<Game>()
+        var resultSet: ResultSet? = null
+        var games: ArrayList<Game>? = null
         try {
             stmt = conn?.createStatement()
-            var query = ("SELECT * FROM $TABLE_USERGAMES WHERE $GAME_USERID = $userid")
+            var query = ("SELECT T1.$GAME_NAME AS $GAME_NAME, T2.$GAME_STATUS AS $GAME_STATUS, T2.$GAME_PLATFORM AS $GAME_PLATFORM," +
+                    "T1.$GAMEID AS $GAMEID, T1.$GAME_COMPANY AS $GAME_COMPANY," +
+                    "T1.$GAME_GENRE AS $GAME_GENRE, T2.$GAME_POINTS AS $GAME_POINTS, T1.$GAME_IMAGE AS $GAME_IMAGE " +
+                    "FROM $TABLE_GAMES T1 INNER JOIN $TABLE_USERGAMES T2 ON T1.$GAMEID = T2.$GAMEID WHERE T2.$GAME_USERID = $userid")
             if (order != null) {
                 query += " ORDER BY $order DESC"
             }
-            val resultSet = stmt?.executeQuery(query)
+            resultSet = stmt?.executeQuery(query)
 
+            games = ArrayList<Game>()
             while (resultSet?.next() == true) {
                 games.add(
                     Game(
                         resultSet.getString(GAME_NAME),
                         resultSet.getString(GAME_STATUS),
                         resultSet.getString(GAME_PLATFORM),
-                        resultSet.getInt(ID),
+                        resultSet.getInt(GAMEID),
                         resultSet.getString(GAME_COMPANY),
                         resultSet.getString(GAME_GENRE),
                         resultSet.getInt(GAME_POINTS),
@@ -249,12 +266,12 @@ class MysqlManager {
 
     fun getUserId(username: String): Int? {
         var stmt: Statement? = null
-        val resultSet: ResultSet? = null
+        var resultSet: ResultSet? = null
         var userid: Int? = null
         try {
             stmt = conn?.createStatement()
             val query = ("SELECT $ID FROM $TABLE_USER WHERE $NICK_USER = '$username'")
-            val resultSet = stmt?.executeQuery(query)
+            resultSet = stmt?.executeQuery(query)
 
             if (resultSet?.next() == true) {
                 userid = resultSet.getInt(ID)
@@ -281,16 +298,30 @@ class MysqlManager {
 
     }
 
-    fun addGameByUserid(game: Game, userid: Int) {
+    fun addGameByUserid(game: Game, userid: Int): Boolean {
         var stmt: Statement? = null
+        var resultSet: ResultSet? = null
         val image = if(game.image.isNullOrEmpty()) "" else game.image
+        var noError = true
         try {
             stmt = conn?.createStatement()
-            stmt?.executeQuery("INSERT INTO $TABLE_USERGAMES ($GAME_NAME, $GAME_PLATFORM, $GAME_STATUS, $GAME_IMAGE, $GAME_USERID, $GAME_COMPANY, $GAME_GENRE," +
-                    "$GAME_POINTS) VALUES ('${game.name}', '${game.platform}', '${game.status}', '$image', $userid, '${game.company}', '${game.genre}', ${game.valoration})")
+            var query = "INSERT INTO $TABLE_GAMES ($GAME_NAME, $GAME_IMAGE, $GAME_COMPANY, $GAME_GENRE" +
+                    ") VALUES ('${game.name}', '$image', '${game.company}', '${game.genre}')"
+            stmt?.executeQuery(query)
+
+            query = "SELECT LAST_INSERT_ID() AS $GAMEID"
+            resultSet = stmt?.executeQuery(query)
+            var gameid = 0
+            if (resultSet?.next() == true) {
+                gameid = resultSet.getInt(GAMEID)
+            }
+            query = "INSERT INTO $TABLE_USERGAMES ($GAMEID, $GAME_STATUS, $GAME_POINTS, $GAME_USERID, $GAME_PLATFORM)" +
+                    "VALUES ($gameid, '${game.status}', ${game.valoration}, $userid, '${game.platform}')"
+            stmt?.executeQuery(query)
 
         } catch (ex: SQLException) {
             // handle any errors
+            noError = false
             ex.printStackTrace()
         } finally {
             if (stmt != null) {
@@ -299,11 +330,19 @@ class MysqlManager {
                 } catch (sqlEx: SQLException) {
                 }
             }
+            if (resultSet != null) {
+                try {
+                    resultSet.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
         }
+        return noError
     }
 
-    fun updateUser(userid: Int, password: String, private : Boolean) {
+    fun updateUser(userid: Int, password: String, private : Boolean): Boolean {
         var stmt: Statement? = null
+        var noError = true
         try {
             stmt = conn?.createStatement()
             val isPrivate = if(private) 1 else 0
@@ -313,6 +352,7 @@ class MysqlManager {
 
         } catch (ex: SQLException) {
             // handle any errors
+            noError = false
             ex.printStackTrace()
         } finally {
             if (stmt != null) {
@@ -322,17 +362,23 @@ class MysqlManager {
                 }
             }
         }
+        return noError
     }
 
-    fun deleteGame(gameid: Int) {
+    fun deleteGame(gameid: Int): Boolean {
         var stmt: Statement? = null
+        var noError = true
         try {
             stmt = conn?.createStatement()
-            val query = ("DELETE FROM $TABLE_USERGAMES WHERE $ID = $gameid")
+            var query = ("DELETE FROM $TABLE_USERGAMES WHERE $GAMEID = $gameid")
+            stmt?.executeQuery(query)
+
+            query = ("DELETE FROM $TABLE_GAMES WHERE $GAMEID = $gameid")
             stmt?.executeQuery(query)
 
         } catch (ex: SQLException) {
             // handle any errors
+            noError = false
             ex.printStackTrace()
         } finally {
             if (stmt != null) {
@@ -342,23 +388,27 @@ class MysqlManager {
                 }
             }
         }
+        return noError
     }
 
     fun getGameById(gameid: Int): Game? {
         var stmt: Statement? = null
-        val resultSet: ResultSet? = null
+        var resultSet: ResultSet? = null
         var game: Game? = null
         try {
             stmt = conn?.createStatement()
-            val query = ("SELECT * FROM $TABLE_USERGAMES WHERE $ID = $gameid")
-            val resultSet = stmt?.executeQuery(query)
+            val query = ("SELECT T1.$GAME_NAME AS $GAME_NAME, T2.$GAME_STATUS AS $GAME_STATUS, T2.$GAME_PLATFORM AS $GAME_PLATFORM," +
+                    "T1.$GAMEID AS $GAMEID, T1.$GAME_COMPANY AS $GAME_COMPANY," +
+                    "T1.$GAME_GENRE AS $GAME_GENRE, T2.$GAME_POINTS AS $GAME_POINTS, T1.$GAME_IMAGE AS $GAME_IMAGE " +
+                    "FROM $TABLE_GAMES T1 INNER JOIN $TABLE_USERGAMES T2 ON T1.$GAMEID = T2.$GAMEID WHERE T1.$GAMEID = $gameid")
+            resultSet = stmt?.executeQuery(query)
 
             if (resultSet?.next() == true) {
                 game = Game(
                     resultSet.getString(GAME_NAME),
                     resultSet.getString(GAME_STATUS),
                     resultSet.getString(GAME_PLATFORM),
-                    resultSet.getInt(ID),
+                    resultSet.getInt(GAMEID),
                     resultSet.getString(GAME_COMPANY),
                     resultSet.getString(GAME_GENRE),
                     resultSet.getInt(GAME_POINTS),
@@ -386,16 +436,21 @@ class MysqlManager {
         return game
     }
 
-    fun updateGame(game: Game) {
+    fun updateGame(game: Game): Boolean {
         var stmt: Statement? = null
         val image = if(game.image.isNullOrEmpty()) "" else game.image
+        var noError = true
         try {
             stmt = conn?.createStatement()
-            stmt?.executeQuery("UPDATE $TABLE_USERGAMES SET $GAME_NAME = '${game.name}', $GAME_PLATFORM = '${game.platform}', $GAME_STATUS = '${game.status}', " +
-                    "$GAME_IMAGE = '$image', $GAME_COMPANY = '${game.company}', $GAME_GENRE = '${game.genre}', $GAME_POINTS = ${game.valoration} WHERE $ID = ${game.id}")
+            var query = ("UPDATE $TABLE_GAMES SET $GAME_NAME = '${game.name}', $GAME_IMAGE = '$image', $GAME_COMPANY = '${game.company}', $GAME_GENRE = '${game.genre}' WHERE $GAMEID = ${game.id}")
+            stmt?.executeQuery(query)
+
+            query = ("UPDATE $TABLE_USERGAMES SET $GAME_STATUS = '${game.status}', $GAME_POINTS = ${game.valoration}, $GAME_PLATFORM = '${game.platform}' WHERE $GAMEID = ${game.id}")
+            stmt?.executeQuery(query)
 
         } catch (ex: SQLException) {
             // handle any errors
+            noError = false
             ex.printStackTrace()
         } finally {
             if (stmt != null) {
@@ -405,18 +460,20 @@ class MysqlManager {
                 }
             }
         }
+        return noError
     }
 
-    fun getUserList(exception: Int): ArrayList<User> {
+    fun getUserList(exception: Int): ArrayList<User>? {
         var stmt: Statement? = null
-        val resultSet: ResultSet? = null
-        val users = ArrayList<User>()
+        var resultSet: ResultSet? = null
+        var users: ArrayList<User>? = null
         try {
             stmt = conn?.createStatement()
             val query = ("SELECT * FROM $TABLE_USER" +
                     " WHERE $ID != $exception")
-            val resultSet = stmt?.executeQuery(query)
+            resultSet = stmt?.executeQuery(query)
 
+            users = ArrayList<User>()
             while (resultSet?.next() == true) {
                 users.add(User(
                     resultSet.getString(NICK_USER),

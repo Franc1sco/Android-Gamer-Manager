@@ -22,6 +22,7 @@ import com.example.audiovisualmanager.adapter.GameAdapter
 import com.example.audiovisualmanager.database.MysqlManager
 import com.example.audiovisualmanager.utils.SwipeToDelete
 import com.example.audiovisualmanager.utils.SwipeToEdit
+import com.example.audiovisualmanager.utils.Utils
 import java.util.*
 
 
@@ -49,17 +50,15 @@ class MainListActivity : AppCompatActivity() {
         if(intent.hasExtra("VIEWERNAME")){
             viewerName=intent.getStringExtra("VIEWERNAME") ?: ""
         }
-        if (!isViewer) {
-            loadStatusSpinner()
-            loadOrderSpinner()
-        } else {
+        if (isViewer) {
             binding.AddGame.visibility = View.INVISIBLE
             binding.AddGame.isEnabled = false
             binding.UserConfig.visibility = View.INVISIBLE
             binding.UserConfig.isEnabled = false
-            binding.clSubTitle.visibility = View.GONE
-            binding.tvTitle.text = "Viendo a $viewerName"
+            binding.tvTitle.text = getString(R.string.viewto, viewerName)
         }
+        loadStatusSpinner()
+        loadOrderSpinner()
         setupAdapter()
     }
 
@@ -70,51 +69,6 @@ class MainListActivity : AppCompatActivity() {
         )
         binding.recyclerView.setHasFixedSize(true)
         loadMainList()
-
-        if (isViewer) return
-
-        val editSwipeHandler = object : SwipeToEdit(this) {
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val adapter = binding.recyclerView.adapter as GameAdapter
-                adapter.notifyEditItem(this@MainListActivity, viewHolder.adapterPosition, userId)
-                finish()
-            }
-        }
-
-        val editItemTouchHelper = ItemTouchHelper(editSwipeHandler)
-        editItemTouchHelper.attachToRecyclerView(binding.recyclerView)
-
-        val deleteSwipeHandler = object : SwipeToDelete(this) {
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val adapter = binding.recyclerView.adapter as GameAdapter
-                val pos= viewHolder.adapterPosition
-                val dialog= AlertDialog.Builder(this@MainListActivity)
-                    .setTitle(getString(R.string.alert_dialog_delete))
-                    .setMessage(getString(R.string.alert_dialog_confirm_delete))
-                    .setNegativeButton(getString(R.string.alert_dialog_no)){ view, _ ->
-                        Toast.makeText(this@MainListActivity,getString(R.string.alert_dialog_denied_delete), Toast.LENGTH_LONG).show()
-                        view.dismiss()
-                        binding.recyclerView.setHasFixedSize(true)
-                        loadMainList()
-                    }
-
-                    .setPositiveButton(getString(R.string.alert_dialog_yes)){ view,_ ->
-                        adapter.removeAt(pos)
-                        Toast.makeText(this@MainListActivity,getString(R.string.alert_dialog_delete_confirmed), Toast.LENGTH_LONG).show()
-                        view.dismiss()
-                    }
-                    .setCancelable(false)
-                    .create()
-                dialog.show()
-
-
-
-
-            }
-        }
-
-        val deleteItemTouchHelper = ItemTouchHelper(deleteSwipeHandler)
-        deleteItemTouchHelper.attachToRecyclerView(binding.recyclerView)
 
         binding.statusList.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
@@ -171,6 +125,51 @@ class MainListActivity : AppCompatActivity() {
             finish()
 
         }
+
+        if (isViewer) return
+
+        val editSwipeHandler = object : SwipeToEdit(this) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val adapter = binding.recyclerView.adapter as GameAdapter
+                adapter.notifyEditItem(this@MainListActivity, viewHolder.adapterPosition, userId)
+                finish()
+            }
+        }
+
+        val editItemTouchHelper = ItemTouchHelper(editSwipeHandler)
+        editItemTouchHelper.attachToRecyclerView(binding.recyclerView)
+
+        val deleteSwipeHandler = object : SwipeToDelete(this) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val adapter = binding.recyclerView.adapter as GameAdapter
+                val pos= viewHolder.adapterPosition
+                val dialog= AlertDialog.Builder(this@MainListActivity)
+                    .setTitle(getString(R.string.alert_dialog_delete))
+                    .setMessage(getString(R.string.alert_dialog_confirm_delete))
+                    .setNegativeButton(getString(R.string.alert_dialog_no)){ view, _ ->
+                        Toast.makeText(this@MainListActivity,getString(R.string.alert_dialog_denied_delete), Toast.LENGTH_LONG).show()
+                        view.dismiss()
+                        binding.recyclerView.setHasFixedSize(true)
+                        loadMainList()
+                    }
+
+                    .setPositiveButton(getString(R.string.alert_dialog_yes)){ view,_ ->
+                        adapter.removeAt(pos)
+                        Toast.makeText(this@MainListActivity,getString(R.string.alert_dialog_delete_confirmed), Toast.LENGTH_LONG).show()
+                        view.dismiss()
+                    }
+                    .setCancelable(false)
+                    .create()
+                dialog.show()
+
+
+
+
+            }
+        }
+
+        val deleteItemTouchHelper = ItemTouchHelper(deleteSwipeHandler)
+        deleteItemTouchHelper.attachToRecyclerView(binding.recyclerView)
     }
 
     private fun listOrderBy(position: Int) {
@@ -180,29 +179,54 @@ class MainListActivity : AppCompatActivity() {
         binding.recyclerView.setHasFixedSize(true)
         listDataAdapter = ArrayList<Game>()
         listDataFullAdapter = ArrayList<Game>()
+        val gamesList: ArrayList<Game>?
         when (position) {
             Constants.ITEM_NOMBRE -> {
-                listDataFullAdapter = dbHandler.getGamesPendingByUserid(userId, "name")
+                gamesList = dbHandler.getGamesPendingByUserid(userId, "name")
+                if (gamesList == null) {
+                    Utils.connectionError(this)
+                    return
+                }
+                listDataFullAdapter = gamesList
             }
             Constants.ITEM_PLATAFORMA -> {
-                listDataFullAdapter = dbHandler.getGamesPendingByUserid(userId, "platform")
+                gamesList = dbHandler.getGamesPendingByUserid(userId, "platform")
+                if (gamesList == null) {
+                    Utils.connectionError(this)
+                    return
+                }
+                listDataFullAdapter = gamesList
             }
             Constants.ITEM_COMPANY -> {
-                listDataFullAdapter = dbHandler.getGamesPendingByUserid(userId, "company")
+                gamesList = dbHandler.getGamesPendingByUserid(userId, "company")
+                if (gamesList == null) {
+                    Utils.connectionError(this)
+                    return
+                }
+                listDataFullAdapter = gamesList
             }
             Constants.ITEM_GENERO -> {
-                listDataFullAdapter = dbHandler.getGamesPendingByUserid(userId, "genre")
+                gamesList = dbHandler.getGamesPendingByUserid(userId, "genre")
+                if (gamesList == null) {
+                    Utils.connectionError(this)
+                    return
+                }
+                listDataFullAdapter = gamesList
             }
             Constants.ITEM_VALORACION -> {
-                listDataFullAdapter = dbHandler.getGamesPendingByUserid(userId, "valoration")
+                gamesList = dbHandler.getGamesPendingByUserid(userId, "valoration")
+                if (gamesList == null) {
+                    Utils.connectionError(this)
+                    return
+                }
+                listDataFullAdapter = gamesList
             }
         }
         listDataAdapter.addAll(listDataFullAdapter)
         adapter = GameAdapter(listDataAdapter, context = this)
         binding.recyclerView.adapter = adapter
 
-        val filterValue = binding.statusList.selectedItemPosition
-        when (filterValue) {
+        when (binding.statusList.selectedItemPosition) {
             Constants.ITEM_PROCESO -> {
                 filterOnly(Constants.EN_PROCESO)
             }
@@ -218,7 +242,12 @@ class MainListActivity : AppCompatActivity() {
     private fun loadMainList() {
         listDataAdapter = ArrayList<Game>()
         listDataFullAdapter = ArrayList<Game>()
-        listDataFullAdapter = dbHandler.getGamesPendingByUserid(userId, "name")
+        val gamesList = dbHandler.getGamesPendingByUserid(userId, "name")
+        if (gamesList == null) {
+            Utils.connectionError(this)
+            return
+        }
+        listDataFullAdapter = gamesList
         listDataAdapter.addAll(listDataFullAdapter)
         adapter = GameAdapter(listDataAdapter, context = this)
         binding.recyclerView.adapter = adapter

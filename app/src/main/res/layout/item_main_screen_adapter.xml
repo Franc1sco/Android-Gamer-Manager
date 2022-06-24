@@ -29,7 +29,6 @@
                 android:id="@+id/iv_game_image"
                 android:layout_width="@dimen/item_circular_image_size"
                 android:layout_height="@dimen/item_circular_image_size"
-                android:contentDescription="@string/image_content_description"
                 android:src="@mipmap/ic_launcher_round"
                 />
             <LinearLayout
