@@ -4,43 +4,28 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.audiovisualmanager.database.MysqlManager
+import com.example.audiovisualmanager.R
 import com.example.audiovisualmanager.databinding.ActivityMainBinding
+import com.example.audiovisualmanager.presenter.IMainPresenter
+import com.example.audiovisualmanager.presenter.MainPresenter
 import com.example.audiovisualmanager.utils.Constants
 import com.example.audiovisualmanager.utils.Utils
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), IMainActivity {
     private lateinit var binding: ActivityMainBinding
-    private var dbHandler: MysqlManager = MysqlManager().getInstance()
+    private var presenter: IMainPresenter = MainPresenter()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        dbHandler.getConnection()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        presenter.attachView(this)
 
         getSavedSession()
+        presenter.getConnection()
 
         binding.buttonLogin.setOnClickListener {
-            val isValidUser = dbHandler.isValidUser(binding.editTextUser.text.toString(), binding.editTextPassword.text.toString())
-            if (isValidUser == null) {
-                Utils.connectionError(this)
-                return@setOnClickListener
-            }
-            if (isValidUser) {
-                val userId = dbHandler.getUserId(binding.editTextUser.text.toString())
-                if (userId == null) {
-                    Utils.connectionError(this)
-                    return@setOnClickListener
-                }
-                checkSaveSession()
-                val intent = Intent(this, MainListActivity::class.java)
-                intent.putExtra("USERID", userId)
-                startActivity(intent)
-            } else {
-                Toast.makeText(this, "invalid user or password", Toast.LENGTH_SHORT).show()
-            }
+            presenter.isValidUser(binding.editTextUser.text.toString(), binding.editTextPassword.text.toString())
         }
 
         binding.buttonRegister.setOnClickListener {
@@ -56,7 +41,28 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkSaveSession() {
+    private fun getSavedSession() {
+        val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
+        val user = sharedPref.getString("USER", null)
+        val password = sharedPref.getString("PASSWORD", null)
+        if (user != null && password != null) {
+            binding.editTextUser.setText(user)
+            binding.editTextPassword.setText(password)
+            binding.checkBoxSaveSession.isChecked = true
+        }
+    }
+
+    @Override
+    override fun onDestroy() {
+        presenter.detachView()
+        super.onDestroy()
+    }
+
+    override fun connectionError() {
+        Utils.connectionError(this)
+    }
+
+    override fun checkSavedSession() {
         val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
         if (binding.checkBoxSaveSession.isChecked) {
             sharedPref.edit().putString("USER", binding.editTextUser.text.toString()).apply()
@@ -67,14 +73,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun getSavedSession() {
-        val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
-        val user = sharedPref.getString("USER", null)
-        val password = sharedPref.getString("PASSWORD", null)
-        if (user != null && password != null) {
-            binding.editTextUser.setText(user)
-            binding.editTextPassword.setText(password)
-            binding.checkBoxSaveSession.isChecked = true
-        }
+    override fun invalidUser() {
+        Utils.showMessage(this, getString(R.string.invalid_user_pass))
+    }
+
+    override fun validUser(userId: Int) {
+        val intent = Intent(this, MainListActivity::class.java)
+        intent.putExtra("USERID", userId)
+        startActivity(intent)
     }
 }

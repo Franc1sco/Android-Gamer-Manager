@@ -40,6 +40,10 @@ class MainListActivity : AppCompatActivity() {
         binding = ActivityMainlistBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        loadViews()
+    }
+
+    private fun loadViews() {
         if(intent.hasExtra("USERID")){
             userId=intent.getIntExtra("USERID", 0)
         }
@@ -50,6 +54,7 @@ class MainListActivity : AppCompatActivity() {
         if(intent.hasExtra("VIEWERNAME")){
             viewerName=intent.getStringExtra("VIEWERNAME") ?: ""
         }
+
         if (isViewer) {
             binding.AddGame.visibility = View.INVISIBLE
             binding.AddGame.isEnabled = false
@@ -69,7 +74,14 @@ class MainListActivity : AppCompatActivity() {
         )
         binding.recyclerView.setHasFixedSize(true)
         loadMainList()
+        setupListeners()
 
+        if (isViewer) return
+
+        setupSwipes()
+    }
+
+    private fun setupListeners() {
         binding.statusList.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parentView: AdapterView<*>?,
@@ -125,9 +137,9 @@ class MainListActivity : AppCompatActivity() {
             finish()
 
         }
+    }
 
-        if (isViewer) return
-
+    private fun setupSwipes() {
         val editSwipeHandler = object : SwipeToEdit(this) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val adapter = binding.recyclerView.adapter as GameAdapter
@@ -268,8 +280,8 @@ class MainListActivity : AppCompatActivity() {
     }
 
     private fun loadOrderSpinner() {
-        val array = listOf("Orden", "Nombre", "Plataforma", "Compañia", "Género", "Valoración")
-        binding.orderList.adapter = object : ArrayAdapter<String>(this, R.layout.simple_list_item_1, array) {
+        binding.orderList.adapter = object : ArrayAdapter<String>(this, R.layout.simple_list_item_1,
+            resources.getStringArray(R.array.main_list_array_order)) {
             override fun isEnabled(position: Int): Boolean {
                 return position != 0
             }
@@ -291,8 +303,8 @@ class MainListActivity : AppCompatActivity() {
     }
 
     private fun loadStatusSpinner() {
-        val array = listOf("Status", "Todos", Constants.PENDIENTE, Constants.EN_PROCESO, Constants.FINALIZADO)
-        binding.statusList.adapter = object : ArrayAdapter<String>(this, R.layout.simple_list_item_1, array) {
+        binding.statusList.adapter = object : ArrayAdapter<String>(this, R.layout.simple_list_item_1,
+            resources.getStringArray(R.array.main_list_array_status)) {
             override fun isEnabled(position: Int): Boolean {
                 return position != 0
             }

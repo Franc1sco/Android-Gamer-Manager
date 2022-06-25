@@ -17,4 +17,9 @@
     <string name="fill_all_fields">Please fill all the fields</string>
     <string name="user_already_extis">User already exists</string>
     <string name="user_registered_success">User registered successfully</string>
+    <string name="status_select">Please select a status</string>
+    <string name="select_platform">Please select a platform</string>
+    <string name="select_company">Please enter a Company name</string>
+    <string name="select_genre">Please enter a Genre name</string>
+    <string name="invalid_user_pass">Usuario o contraseña incorrectos</string>
 </resources>

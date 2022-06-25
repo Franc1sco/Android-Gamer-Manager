@@ -18,7 +18,6 @@ import com.example.audiovisualmanager.R
 import com.example.audiovisualmanager.database.MysqlManager
 import com.example.audiovisualmanager.databinding.AddgameActivityBinding
 import com.example.audiovisualmanager.model.Game
-import com.example.audiovisualmanager.utils.Constants
 import com.example.audiovisualmanager.utils.Utils
 
 
@@ -52,16 +51,16 @@ class AddGameActivity: AppCompatActivity() {
                     Utils.showMessage(this, getString(R.string.error_game_name_empty))
                 }
                 binding.spinnerStatus.selectedItemPosition <= 0 -> {
-                    Utils.showMessage(this, "Please select a status")
+                    Utils.showMessage(this, getString(R.string.status_select))
                 }
                 binding.spinnerPlatform.selectedItemPosition <= 0 -> {
-                    Utils.showMessage(this, "Please select a platform")
+                    Utils.showMessage(this, getString(R.string.select_platform))
                 }
                 binding.editTextGameCompany.text.isEmpty() -> {
-                    Utils.showMessage(this, "Please enter a Company name")
+                    Utils.showMessage(this, getString(R.string.select_company))
                 }
                 binding.editTextGameGenre.text.isEmpty() -> {
-                    Utils.showMessage(this, "Please enter a Genre name")
+                    Utils.showMessage(this, getString(R.string.select_genre))
                 }
                 else -> {
                     if (gameId > 0) {
@@ -185,8 +184,8 @@ class AddGameActivity: AppCompatActivity() {
     }
 
     private fun loadStatusSpinner() {
-        val array = listOf("Status", Constants.PENDIENTE, Constants.EN_PROCESO, Constants.FINALIZADO)
-        binding.spinnerStatus.adapter = object : ArrayAdapter<String>(this, R.layout.simple_list_item_1, array) {
+        binding.spinnerStatus.adapter = object : ArrayAdapter<String>(this, R.layout.simple_list_item_1,
+            resources.getStringArray(R.array.add_game_array_status)) {
             override fun isEnabled(position: Int): Boolean {
                 return position != 0
             }
@@ -208,8 +207,8 @@ class AddGameActivity: AppCompatActivity() {
     }
 
     private fun loadPlatformSpinner() {
-        val array = listOf("Plataforma", Constants.PC, Constants.PLAYSTATION, Constants.XBOX)
-        binding.spinnerPlatform.adapter = object : ArrayAdapter<String>(this, R.layout.simple_list_item_1, array) {
+        binding.spinnerPlatform.adapter = object : ArrayAdapter<String>(this, R.layout.simple_list_item_1,
+            resources.getStringArray(R.array.add_game_array_platform)) {
             override fun isEnabled(position: Int): Boolean {
                 return position != 0
             }
@@ -231,8 +230,8 @@ class AddGameActivity: AppCompatActivity() {
     }
 
     private fun loadPointsSpinner() {
-        val array = listOf("Valoración", "1", "2", "3", "4", "5")
-        binding.spinnerPoints.adapter = object : ArrayAdapter<String>(this, R.layout.simple_list_item_1, array) {
+        binding.spinnerPoints.adapter = object : ArrayAdapter<String>(this, R.layout.simple_list_item_1,
+            resources.getStringArray(R.array.add_game_array_valoration)) {
             override fun isEnabled(position: Int): Boolean {
                 return position != 0
             }

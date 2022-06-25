@@ -22,6 +22,10 @@ class EditUserActivity: AppCompatActivity() {
         binding = EdituserActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        loadViews()
+    }
+
+    private fun loadViews() {
         setupPrivateSpinner()
         if(intent.hasExtra("USERID")){
             userId=intent.getIntExtra("USERID", 0)
@@ -30,7 +34,7 @@ class EditUserActivity: AppCompatActivity() {
         binding.buttonUpdatePassword.setOnClickListener {
             if (binding.editPasswordUpdate.text.toString().isNotEmpty() && binding.editPasswordUpdate.text.toString() == binding.editPasswordUpdateRepeat.text.toString()) {
                 if (!dbHandler.updateUser(userId, binding.editPasswordUpdate.text.toString(),
-                    binding.spinnerUpdatePrivate.selectedItemPosition == 1)) {
+                        binding.spinnerUpdatePrivate.selectedItemPosition == 1)) {
                     Utils.connectionError(this)
                 } else {
                     Toast.makeText(this, getString(R.string.password_updated), Toast.LENGTH_SHORT).show()
