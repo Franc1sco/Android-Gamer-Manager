@@ -32,7 +32,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clSubTitle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:background="#F44336"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -44,7 +44,6 @@
             android:id="@+id/status_list"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:autofillHints="creditCardExpirationDate"
             android:drawSelectorOnTop="true"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -53,8 +52,26 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:drawSelectorOnTop="true"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/status_list"
+            app:layout_constraintTop_toTopOf="@id/clSubTitle" />
+        <ImageView
+            android:id="@+id/ivOrderDesc"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_baseline_arrow_downward_48"
+            app:layout_constraintStart_toEndOf="@+id/order_list"
+            app:layout_constraintBottom_toBottomOf="@id/clSubTitle"
             />
+        <ImageView
+            android:id="@+id/ivOrderAsc"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_baseline_arrow_upward_48"
+            app:layout_constraintStart_toEndOf="@+id/order_list"
+            app:layout_constraintBottom_toBottomOf="@id/clSubTitle"
+            android:visibility="gone"
+            />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

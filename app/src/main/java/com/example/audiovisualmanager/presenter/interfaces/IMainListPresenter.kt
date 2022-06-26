@@ -5,6 +5,6 @@ import java.util.ArrayList
 
 interface IMainListPresenter: IBasePresenter {
     fun applyStatusFilter(filter: Int, listDataFullAdapter: ArrayList<Game>)
-    suspend fun orderList(userId: Int, orderBy: Int)
+    suspend fun orderList(userId: Int, orderBy: Int, ascOrder: Boolean)
     suspend fun removeGame(gameId: Int)
 }

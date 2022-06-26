@@ -56,23 +56,23 @@ class MainListPresenter : IMainListPresenter {
         }
     }
 
-    override suspend fun orderList(userId: Int, orderBy: Int) {
+    override suspend fun orderList(userId: Int, orderBy: Int, ascOrder: Boolean) {
         var gamesList: ArrayList<Game>? = null
         when (orderBy) {
-            Constants.ITEM_NOMBRE -> {
-                gamesList = dbHandler.getGamesPendingByUserid(userId, "name")
+            Constants.ITEM_NOMBRE, 0 -> {
+                gamesList = dbHandler.getGamesPendingByUserid(userId, "name", ascOrder)
             }
             Constants.ITEM_PLATAFORMA -> {
-                gamesList = dbHandler.getGamesPendingByUserid(userId, "platform")
+                gamesList = dbHandler.getGamesPendingByUserid(userId, "platform", ascOrder)
             }
             Constants.ITEM_COMPANY -> {
-                gamesList = dbHandler.getGamesPendingByUserid(userId, "company")
+                gamesList = dbHandler.getGamesPendingByUserid(userId, "company", ascOrder)
             }
             Constants.ITEM_GENERO -> {
-                gamesList = dbHandler.getGamesPendingByUserid(userId, "genre")
+                gamesList = dbHandler.getGamesPendingByUserid(userId, "genre", ascOrder)
             }
             Constants.ITEM_VALORACION -> {
-                gamesList = dbHandler.getGamesPendingByUserid(userId, "valoration")
+                gamesList = dbHandler.getGamesPendingByUserid(userId, "valoration", ascOrder)
             }
         }
         withContext(Dispatchers.Main) {

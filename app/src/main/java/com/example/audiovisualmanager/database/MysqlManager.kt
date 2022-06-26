@@ -212,7 +212,7 @@ class MysqlManager {
         return isValid
     }
 
-    fun getGamesPendingByUserid(userid: Int, order: String? = null): ArrayList<Game>? {
+    fun getGamesPendingByUserid(userid: Int, order: String? = null, ascOrder: Boolean = true): ArrayList<Game>? {
         var stmt: Statement? = null
         var resultSet: ResultSet? = null
         var games: ArrayList<Game>? = null
@@ -223,7 +223,8 @@ class MysqlManager {
                     "T1.$GAME_GENRE AS $GAME_GENRE, T2.$GAME_POINTS AS $GAME_POINTS, T1.$GAME_IMAGE AS $GAME_IMAGE " +
                     "FROM $TABLE_GAMES T1 INNER JOIN $TABLE_USERGAMES T2 ON T1.$GAMEID = T2.$GAMEID WHERE T2.$GAME_USERID = $userid")
             if (order != null) {
-                query += " ORDER BY $order DESC"
+                val orderBy = if (ascOrder) "ASC" else "DESC"
+                query += " ORDER BY $order $orderBy"
             }
             resultSet = stmt?.executeQuery(query)
 

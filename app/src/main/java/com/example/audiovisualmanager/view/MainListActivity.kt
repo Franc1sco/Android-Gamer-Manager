@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -71,6 +72,37 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
         loadStatusSpinner()
         loadOrderSpinner()
         setupAdapter()
+        setupAscListener()
+    }
+
+    private fun setupAscListener() {
+        binding.ivOrderAsc.setOnClickListener{
+            binding.ivOrderAsc.visibility = View.GONE
+            binding.ivOrderDesc.visibility = View.VISIBLE
+            showLoadingScreen(true)
+            lifecycleScope.launch(Dispatchers.Main) {
+                withContext(Dispatchers.IO) {
+                    presenter.orderList(
+                        userId,
+                        binding.orderList.selectedItemPosition,
+                        binding.ivOrderAsc.isVisible
+                    )
+                }
+            }.invokeOnCompletion { showLoadingScreen(false) }
+        }
+        binding.ivOrderDesc.setOnClickListener{
+            binding.ivOrderDesc.visibility = View.GONE
+            binding.ivOrderAsc.visibility = View.VISIBLE
+            showLoadingScreen(true)
+            lifecycleScope.launch(Dispatchers.Main) {
+                withContext(Dispatchers.IO) {
+                    presenter.orderList(
+                        userId,
+                        binding.orderList.selectedItemPosition,
+                        binding.ivOrderAsc.isVisible
+                    )
+                }
+            }.invokeOnCompletion { showLoadingScreen(false) }        }
     }
 
     private fun setupAdapter() {
@@ -185,7 +217,7 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
         showLoadingScreen(true)
         lifecycleScope.launch(Dispatchers.Main) {
             withContext(Dispatchers.IO) {
-                presenter.orderList(userId, position)
+                presenter.orderList(userId, position, binding.ivOrderAsc.isVisible)
             }
         }.invokeOnCompletion { showLoadingScreen(false) }
     }
@@ -194,7 +226,7 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
         showLoadingScreen(true)
         lifecycleScope.launch(Dispatchers.Main) {
             withContext(Dispatchers.IO) {
-                presenter.orderList(userId, Constants.ITEM_NOMBRE)
+                presenter.orderList(userId, Constants.ITEM_NOMBRE, binding.ivOrderAsc.isVisible)
             }
         }.invokeOnCompletion {
             showLoadingScreen(false)
@@ -284,9 +316,11 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
         if (visibleLoading) {
             binding.progressBar.visibility = View.VISIBLE
             binding.clEnd.visibility = View.GONE
+            binding.clSubTitle.visibility = View.GONE
         } else {
             binding.progressBar.visibility = View.GONE
             binding.clEnd.visibility = View.VISIBLE
+            binding.clSubTitle.visibility = View.VISIBLE
         }
     }
 }
