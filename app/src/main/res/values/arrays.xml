@@ -49,6 +49,7 @@
     </string-array>
     <string-array name="main_list_array_status">
         <item>Status</item>
+        <item>Todos</item>
         <item>Pendiente</item>
         <item>En proceso</item>
         <item>Finalizado</item>

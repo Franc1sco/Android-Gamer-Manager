@@ -1,4 +1,4 @@
-package com.example.audiovisualmanager.activity
+package com.example.audiovisualmanager.view.interfaces
 
 interface IMainActivity {
     fun connectionError()

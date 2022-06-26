@@ -1,4 +1,4 @@
-package com.example.audiovisualmanager.activity
+package com.example.audiovisualmanager.view
 
 import android.app.AlertDialog
 import android.content.Intent
@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,26 +20,32 @@ import com.example.audiovisualmanager.databinding.ActivityMainlistBinding
 import com.example.audiovisualmanager.model.Game
 import com.example.audiovisualmanager.utils.Constants
 import com.example.audiovisualmanager.adapter.GameAdapter
-import com.example.audiovisualmanager.database.MysqlManager
+import com.example.audiovisualmanager.model.User
+import com.example.audiovisualmanager.presenter.interfaces.IMainListPresenter
+import com.example.audiovisualmanager.presenter.MainListPresenter
 import com.example.audiovisualmanager.utils.SwipeToDelete
 import com.example.audiovisualmanager.utils.SwipeToEdit
 import com.example.audiovisualmanager.utils.Utils
-import java.util.*
+import com.example.audiovisualmanager.view.interfaces.IMainListActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlin.collections.ArrayList
 
-
-class MainListActivity : AppCompatActivity() {
+class MainListActivity : AppCompatActivity(), IMainListActivity {
     private lateinit var binding: ActivityMainlistBinding
     private lateinit var listDataAdapter: ArrayList<Game>
     private lateinit var listDataFullAdapter: ArrayList<Game>
-    private var dbHandler: MysqlManager = MysqlManager().getInstance()
     private lateinit var adapter: GameAdapter
     private var userId: Int = 0
     private var isViewer: Boolean = false
     private var viewerName = ""
+    private var presenter: IMainListPresenter = MainListPresenter()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainlistBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        presenter.attachView(this)
 
         loadViews()
     }
@@ -72,9 +79,7 @@ class MainListActivity : AppCompatActivity() {
             this,
             LinearLayoutManager.VERTICAL, false
         )
-        binding.recyclerView.setHasFixedSize(true)
         loadMainList()
-        setupListeners()
 
         if (isViewer) return
 
@@ -89,20 +94,7 @@ class MainListActivity : AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
-                when (position) {
-                    Constants.ITEM_TODOS -> {
-                        filterOnly(null)
-                    }
-                    Constants.ITEM_PROCESO -> {
-                        filterOnly(Constants.EN_PROCESO)
-                    }
-                    Constants.ITEM_PENDIENTE -> {
-                        filterOnly(Constants.PENDIENTE)
-                    }
-                    Constants.ITEM_FINALIZADO -> {
-                        filterOnly(Constants.FINALIZADO)
-                    }
-                }
+                presenter.applyStatusFilter(position, listDataFullAdapter)
             }
 
             override fun onNothingSelected(parentView: AdapterView<*>?) {}
@@ -122,20 +114,17 @@ class MainListActivity : AppCompatActivity() {
         }
 
         binding.AddGame.setOnClickListener{
-
-            val intent2= Intent (this ,AddGameActivity::class.java)
+            val intent2= Intent (this , AddGameActivity::class.java)
             intent2.putExtra("USERID", userId)
             startActivity(intent2)
             finish()
-
         }
 
         binding.UserConfig.setOnClickListener{
-            val intent2= Intent (this ,EditUserActivity::class.java)
+            val intent2= Intent (this , EditUserActivity::class.java)
             intent2.putExtra("USERID", userId)
             startActivity(intent2)
             finish()
-
         }
     }
 
@@ -162,21 +151,24 @@ class MainListActivity : AppCompatActivity() {
                         Toast.makeText(this@MainListActivity,getString(R.string.alert_dialog_denied_delete), Toast.LENGTH_LONG).show()
                         view.dismiss()
                         binding.recyclerView.setHasFixedSize(true)
-                        loadMainList()
                     }
 
                     .setPositiveButton(getString(R.string.alert_dialog_yes)){ view,_ ->
-                        adapter.removeAt(pos)
-                        Toast.makeText(this@MainListActivity,getString(R.string.alert_dialog_delete_confirmed), Toast.LENGTH_LONG).show()
+                        val gameId = adapter.removeAt(pos)
+                        showLoadingScreen(true)
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            withContext(Dispatchers.IO) {
+                                presenter.removeGame(gameId)
+                            }
+                        }.invokeOnCompletion {
+                            showLoadingScreen(false)
+                            Toast.makeText(this@MainListActivity,getString(R.string.alert_dialog_delete_confirmed), Toast.LENGTH_LONG).show()
+                        }
                         view.dismiss()
                     }
                     .setCancelable(false)
                     .create()
                 dialog.show()
-
-
-
-
             }
         }
 
@@ -188,95 +180,24 @@ class MainListActivity : AppCompatActivity() {
         if (position == 0) {
             return
         }
-        binding.recyclerView.setHasFixedSize(true)
-        listDataAdapter = ArrayList<Game>()
-        listDataFullAdapter = ArrayList<Game>()
-        val gamesList: ArrayList<Game>?
-        when (position) {
-            Constants.ITEM_NOMBRE -> {
-                gamesList = dbHandler.getGamesPendingByUserid(userId, "name")
-                if (gamesList == null) {
-                    Utils.connectionError(this)
-                    return
-                }
-                listDataFullAdapter = gamesList
+        showLoadingScreen(true)
+        lifecycleScope.launch(Dispatchers.Main) {
+            withContext(Dispatchers.IO) {
+                presenter.orderList(userId, position)
             }
-            Constants.ITEM_PLATAFORMA -> {
-                gamesList = dbHandler.getGamesPendingByUserid(userId, "platform")
-                if (gamesList == null) {
-                    Utils.connectionError(this)
-                    return
-                }
-                listDataFullAdapter = gamesList
-            }
-            Constants.ITEM_COMPANY -> {
-                gamesList = dbHandler.getGamesPendingByUserid(userId, "company")
-                if (gamesList == null) {
-                    Utils.connectionError(this)
-                    return
-                }
-                listDataFullAdapter = gamesList
-            }
-            Constants.ITEM_GENERO -> {
-                gamesList = dbHandler.getGamesPendingByUserid(userId, "genre")
-                if (gamesList == null) {
-                    Utils.connectionError(this)
-                    return
-                }
-                listDataFullAdapter = gamesList
-            }
-            Constants.ITEM_VALORACION -> {
-                gamesList = dbHandler.getGamesPendingByUserid(userId, "valoration")
-                if (gamesList == null) {
-                    Utils.connectionError(this)
-                    return
-                }
-                listDataFullAdapter = gamesList
-            }
-        }
-        listDataAdapter.addAll(listDataFullAdapter)
-        adapter = GameAdapter(listDataAdapter, context = this)
-        binding.recyclerView.adapter = adapter
-
-        when (binding.statusList.selectedItemPosition) {
-            Constants.ITEM_PROCESO -> {
-                filterOnly(Constants.EN_PROCESO)
-            }
-            Constants.ITEM_PENDIENTE -> {
-                filterOnly(Constants.PENDIENTE)
-            }
-            Constants.ITEM_FINALIZADO -> {
-                filterOnly(Constants.FINALIZADO)
-            }
-        }
+        }.invokeOnCompletion { showLoadingScreen(false) }
     }
 
     private fun loadMainList() {
-        listDataAdapter = ArrayList<Game>()
-        listDataFullAdapter = ArrayList<Game>()
-        val gamesList = dbHandler.getGamesPendingByUserid(userId, "name")
-        if (gamesList == null) {
-            Utils.connectionError(this)
-            return
-        }
-        listDataFullAdapter = gamesList
-        listDataAdapter.addAll(listDataFullAdapter)
-        adapter = GameAdapter(listDataAdapter, context = this)
-        binding.recyclerView.adapter = adapter
-    }
-
-    private fun filterOnly(filter: String?) {
-        listDataAdapter.clear()
-        if (filter != null) {
-            for (i in listDataFullAdapter.indices) {
-                if (listDataFullAdapter[i].status == filter) {
-                    listDataAdapter.add(listDataFullAdapter[i])
-                }
+        showLoadingScreen(true)
+        lifecycleScope.launch(Dispatchers.Main) {
+            withContext(Dispatchers.IO) {
+                presenter.orderList(userId, Constants.ITEM_NOMBRE)
             }
-        } else {
-            listDataAdapter.addAll(listDataFullAdapter)
+        }.invokeOnCompletion {
+            showLoadingScreen(false)
+            setupListeners()
         }
-        adapter.notifyDataSetChanged()
     }
 
     private fun loadOrderSpinner() {
@@ -322,6 +243,48 @@ class MainListActivity : AppCompatActivity() {
                 }
                 return view
             }
+        }
+    }
+
+    @Override
+    override fun onDestroy() {
+        presenter.detachView()
+        super.onDestroy()
+    }
+
+    override fun applyFilterOnView(gameList: ArrayList<Game>) {
+        listDataAdapter.clear()
+        listDataAdapter.addAll(gameList)
+        adapter.notifyDataSetChanged()
+    }
+
+    override fun connectionError() {
+        Utils.connectionError(this)
+    }
+
+    override fun applyOrderOnView(gameList: ArrayList<Game>) {
+        binding.recyclerView.setHasFixedSize(true)
+
+        listDataAdapter = gameList
+        listDataFullAdapter = gameList
+        listDataAdapter = ArrayList()
+        listDataFullAdapter = ArrayList()
+        listDataFullAdapter.addAll(gameList)
+        listDataAdapter.addAll(listDataFullAdapter)
+
+        adapter = GameAdapter(listDataAdapter, context = this)
+        binding.recyclerView.adapter = adapter
+
+        presenter.applyStatusFilter(binding.statusList.selectedItemPosition, listDataFullAdapter)
+    }
+
+    private fun showLoadingScreen(visibleLoading: Boolean) {
+        if (visibleLoading) {
+            binding.progressBar.visibility = View.VISIBLE
+            binding.clEnd.visibility = View.GONE
+        } else {
+            binding.progressBar.visibility = View.GONE
+            binding.clEnd.visibility = View.VISIBLE
         }
     }
 }

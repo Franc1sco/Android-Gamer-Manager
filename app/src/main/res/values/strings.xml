@@ -22,4 +22,5 @@
     <string name="select_company">Please enter a Company name</string>
     <string name="select_genre">Please enter a Genre name</string>
     <string name="invalid_user_pass">Usuario o contraseña incorrectos</string>
+    <string name="user_list">Lista de Usuarios</string>
 </resources>

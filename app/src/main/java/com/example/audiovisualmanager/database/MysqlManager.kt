@@ -48,11 +48,12 @@ class MysqlManager {
     private var conn: Connection? = null
     private var username = "android" // provide the username
     private var password = "Android1313!" // provide the corresponding password
-    fun getConnection() {
+    fun getConnection(): Boolean {
         val policy = ThreadPolicy.Builder().permitAll().build()
 
         StrictMode.setThreadPolicy(policy)
 
+        var noError = true
         val connectionProps = Properties()
         connectionProps["user"] = username
         connectionProps["password"] = password
@@ -65,20 +66,25 @@ class MysqlManager {
                         DATABASE_NAME,
                 connectionProps)
         } catch (ex: SQLException) {
+            noError = false
             // handle any errors
             ex.printStackTrace()
         } catch (ex: Exception) {
+            noError = false
             // handle any errors
             ex.printStackTrace()
         }
         finally {
-            executeMySQLQueryCreation()
+            if (noError) {
+                noError = executeMySQLQueryCreation()
+            }
         }
+        return noError
     }
 
-    private fun executeMySQLQueryCreation() {
+    private fun executeMySQLQueryCreation(): Boolean {
         var stmt: Statement? = null
-
+        var noError = true
         try {
             stmt = conn?.createStatement()
             var query = ("CREATE TABLE IF NOT EXISTS " + TABLE_USER + "("
@@ -108,6 +114,7 @@ class MysqlManager {
 
         } catch (ex: SQLException) {
             // handle any errors
+            noError = false
             ex.printStackTrace()
         } finally {
             if (stmt != null) {
@@ -117,6 +124,7 @@ class MysqlManager {
                 }
             }
         }
+        return noError
     }
 
     fun isValidUser(username: String, password: String): Boolean? {

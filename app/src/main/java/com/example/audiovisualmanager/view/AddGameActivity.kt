@@ -1,4 +1,4 @@
-package com.example.audiovisualmanager.activity
+package com.example.audiovisualmanager.view
 
 import android.content.Intent
 import android.graphics.Color
@@ -11,6 +11,7 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
@@ -18,24 +19,31 @@ import com.example.audiovisualmanager.R
 import com.example.audiovisualmanager.database.MysqlManager
 import com.example.audiovisualmanager.databinding.AddgameActivityBinding
 import com.example.audiovisualmanager.model.Game
+import com.example.audiovisualmanager.presenter.AddGamePresenter
+import com.example.audiovisualmanager.presenter.interfaces.IAddGamePresenter
 import com.example.audiovisualmanager.utils.Utils
+import com.example.audiovisualmanager.view.interfaces.IAddGameActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
-class AddGameActivity: AppCompatActivity() {
+class AddGameActivity: AppCompatActivity(), IAddGameActivity {
     private lateinit var binding: AddgameActivityBinding
     private var userId: Int = 0
     private var gameId: Int = 0
-    private var dbHandler: MysqlManager = MysqlManager().getInstance()
+    private var presenter: IAddGamePresenter = AddGamePresenter()
     private var imageLoaded = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = AddgameActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        presenter.attachView(this)
 
-        if(intent.hasExtra("USERID")){
+        if(intent.hasExtra("USERID")) {
             userId=intent.getIntExtra("USERID", 0)
         }
-        if(intent.hasExtra("GAMEID")){
+        if(intent.hasExtra("GAMEID")) {
             gameId=intent.getIntExtra("GAMEID", 0)
         }
 
@@ -68,7 +76,7 @@ class AddGameActivity: AppCompatActivity() {
                     } else {
                         addGame()
                     }
-                    val intent2= Intent (this ,MainListActivity::class.java)
+                    val intent2= Intent (this , MainListActivity::class.java)
                     intent2.putExtra("USERID", userId)
                     startActivity(intent2)
                     finish()
@@ -77,6 +85,12 @@ class AddGameActivity: AppCompatActivity() {
             }
 
         }
+    }
+
+    @Override
+    override fun onDestroy() {
+        presenter.detachView()
+        super.onDestroy()
     }
 
     private fun loadImageSelector() {
@@ -121,18 +135,21 @@ class AddGameActivity: AppCompatActivity() {
         if (binding.editTextGameImage.text.isNotEmpty() && imageLoaded) {
             imageUrl = binding.editTextGameImage.text.toString()
         }
-        if (!dbHandler.addGameByUserid(Game(
-            binding.editTextGameName.text.toString(),
-            binding.spinnerStatus.selectedItem.toString(),
-            binding.spinnerPlatform.selectedItem.toString(), 0,
-            binding.editTextGameCompany.text.toString(),
-            binding.editTextGameGenre.text.toString(),
-            binding.spinnerPoints.selectedItem.toString().toInt(),
-            imageUrl),
-            userId
-        )) {
-            Utils.connectionError(this)
-        }
+        showLoadingScreen(true)
+        lifecycleScope.launch(Dispatchers.Main) {
+            withContext(Dispatchers.IO) {
+                presenter.addGameByUserid(Game(
+                    binding.editTextGameName.text.toString(),
+                    binding.spinnerStatus.selectedItem.toString(),
+                    binding.spinnerPlatform.selectedItem.toString(), 0,
+                    binding.editTextGameCompany.text.toString(),
+                    binding.editTextGameGenre.text.toString(),
+                    binding.spinnerPoints.selectedItem.toString().toInt(),
+                    imageUrl),
+                    userId
+                )
+            }
+        }.invokeOnCompletion { showLoadingScreen(false) }
     }
 
     private fun updateGame() {
@@ -140,38 +157,28 @@ class AddGameActivity: AppCompatActivity() {
         if (binding.editTextGameImage.text.isNotEmpty() && imageLoaded) {
             imageUrl = binding.editTextGameImage.text.toString()
         }
-        if (!dbHandler.updateGame(
-            Game(
-                binding.editTextGameName.text.toString(),
-                binding.spinnerStatus.selectedItem.toString(),
-                binding.spinnerPlatform.selectedItem.toString(), gameId,
-                binding.editTextGameCompany.text.toString(),
-                binding.editTextGameGenre.text.toString(),
-                binding.spinnerPoints.selectedItem.toString().toInt(),
-                imageUrl)
-        )) {
-            Utils.connectionError(this)
-        }
+        showLoadingScreen(true)
+        lifecycleScope.launch(Dispatchers.Main) {
+            withContext(Dispatchers.IO) {
+                presenter.updateGame(Game(
+                    binding.editTextGameName.text.toString(),
+                    binding.spinnerStatus.selectedItem.toString(),
+                    binding.spinnerPlatform.selectedItem.toString(), gameId,
+                    binding.editTextGameCompany.text.toString(),
+                    binding.editTextGameGenre.text.toString(),
+                    binding.spinnerPoints.selectedItem.toString().toInt(),
+                    imageUrl))
+            }
+        }.invokeOnCompletion { showLoadingScreen(false) }
     }
 
     private fun loadEditGame() {
-        val game = dbHandler.getGameById(gameId)
-        if (game == null) {
-            Utils.connectionError(this)
-            return
-        }
-        binding.editTextGameName.setText(game.name)
-        binding.spinnerStatus.setSelection(getIndexSpinner(binding.spinnerStatus, game.status))
-        binding.spinnerPlatform.setSelection(getIndexSpinner(binding.spinnerPlatform, game.platform))
-        binding.spinnerPoints.setSelection(getIndexSpinner(binding.spinnerPoints, game.valoration.toString()))
-        binding.editTextGameCompany.setText(game.company)
-        binding.editTextGameGenre.setText(game.genre)
-        binding.buttonDoRegister.text = getString(R.string.update_game)
-        if (game.image.isNullOrEmpty().not()) {
-            binding.editTextGameImage.setText(game.image)
-            Glide.with(this).load(game.image).into(binding.imageViewGame)
-            imageLoaded = true
-        }
+        showLoadingScreen(true)
+        lifecycleScope.launch(Dispatchers.Main) {
+            withContext(Dispatchers.IO) {
+                presenter.getGameById(gameId)
+            }
+        }.invokeOnCompletion { showLoadingScreen(false) }
     }
 
     private fun getIndexSpinner(spinner: Spinner, status: Any): Int {
@@ -252,11 +259,47 @@ class AddGameActivity: AppCompatActivity() {
         }
     }
 
+    private fun showLoadingScreen(visibleLoading: Boolean) {
+        if (visibleLoading) {
+            binding.progressBar.visibility = View.VISIBLE
+            binding.lytMainContent.visibility = View.GONE
+        } else {
+            binding.progressBar.visibility = View.GONE
+            binding.lytMainContent.visibility = View.VISIBLE
+        }
+    }
+
     @Override
     override fun onBackPressed() {
-        val intent2= Intent (this ,MainListActivity::class.java)
+        val intent2= Intent (this , MainListActivity::class.java)
         intent2.putExtra("USERID", userId)
         startActivity(intent2)
         finish()
+    }
+
+    override fun connectionError() {
+        Utils.connectionError(this)
+    }
+
+    override fun updateOrAddGameSuccess() {
+        val intent2= Intent (this , MainListActivity::class.java)
+        intent2.putExtra("USERID", userId)
+        startActivity(intent2)
+        finish()
+    }
+
+    override fun loadGame(game: Game) {
+        binding.editTextGameName.setText(game.name)
+        binding.spinnerStatus.setSelection(getIndexSpinner(binding.spinnerStatus, game.status))
+        binding.spinnerPlatform.setSelection(getIndexSpinner(binding.spinnerPlatform, game.platform))
+        binding.spinnerPoints.setSelection(getIndexSpinner(binding.spinnerPoints, game.valoration.toString()))
+        binding.editTextGameCompany.setText(game.company)
+        binding.editTextGameGenre.setText(game.genre)
+        binding.buttonDoRegister.text = getString(R.string.update_game)
+        if (game.image.isNullOrEmpty().not()) {
+            binding.editTextGameImage.setText(game.image)
+            Glide.with(this).load(game.image).into(binding.imageViewGame)
+            imageLoaded = true
+        }
     }
 }

@@ -1,16 +1,22 @@
-package com.example.audiovisualmanager.activity
+package com.example.audiovisualmanager.view
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.audiovisualmanager.R
 import com.example.audiovisualmanager.databinding.ActivityMainBinding
-import com.example.audiovisualmanager.presenter.IMainPresenter
+import com.example.audiovisualmanager.presenter.interfaces.IMainPresenter
 import com.example.audiovisualmanager.presenter.MainPresenter
 import com.example.audiovisualmanager.utils.Constants
 import com.example.audiovisualmanager.utils.Utils
+import com.example.audiovisualmanager.view.interfaces.IMainActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity(), IMainActivity {
     private lateinit var binding: ActivityMainBinding
@@ -22,10 +28,24 @@ class MainActivity : AppCompatActivity(), IMainActivity {
         presenter.attachView(this)
 
         getSavedSession()
-        presenter.getConnection()
+
+        showLoadingScreen(true)
+        lifecycleScope.launch(Dispatchers.Main) {
+            withContext(Dispatchers.IO) {
+                presenter.getConnection()
+            }
+        }.invokeOnCompletion { showLoadingScreen(false) }
 
         binding.buttonLogin.setOnClickListener {
-            presenter.isValidUser(binding.editTextUser.text.toString(), binding.editTextPassword.text.toString())
+            showLoadingScreen(true)
+            lifecycleScope.launch(Dispatchers.Main) {
+                withContext(Dispatchers.IO) {
+                    presenter.isValidUser(
+                        binding.editTextUser.text.toString(),
+                        binding.editTextPassword.text.toString()
+                    )
+                }
+            }.invokeOnCompletion { showLoadingScreen(false) }
         }
 
         binding.buttonRegister.setOnClickListener {
@@ -81,5 +101,15 @@ class MainActivity : AppCompatActivity(), IMainActivity {
         val intent = Intent(this, MainListActivity::class.java)
         intent.putExtra("USERID", userId)
         startActivity(intent)
+    }
+
+    private fun showLoadingScreen(visibleLoading: Boolean) {
+        if (visibleLoading) {
+            binding.progressBar.visibility = View.VISIBLE
+            binding.lytMainContent.visibility = View.GONE
+        } else {
+            binding.progressBar.visibility = View.GONE
+            binding.lytMainContent.visibility = View.VISIBLE
+        }
     }
 }

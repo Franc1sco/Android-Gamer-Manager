@@ -1,8 +1,11 @@
 package com.example.audiovisualmanager.presenter
 
 import android.app.Activity
-import com.example.audiovisualmanager.activity.IMainActivity
+import com.example.audiovisualmanager.view.interfaces.IMainActivity
 import com.example.audiovisualmanager.database.MysqlManager
+import com.example.audiovisualmanager.presenter.interfaces.IMainPresenter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class MainPresenter : IMainPresenter {
     private var view: IMainActivity? = null
@@ -15,26 +18,36 @@ class MainPresenter : IMainPresenter {
         this.view = null
     }
 
-    override fun getConnection() {
-        dbHandler.getConnection()
+    override suspend fun getConnection() {
+        if (!dbHandler.getConnection()) {
+            withContext(Dispatchers.Main) {
+                view?.connectionError()
+            }
+        }
     }
 
-    override fun isValidUser(user: String, password: String) {
+    override suspend fun isValidUser(user: String, password: String) {
         val isValidUser = dbHandler.isValidUser(user, password)
         if (isValidUser == null) {
-            view?.connectionError()
+            withContext(Dispatchers.Main) {
+                view?.connectionError()
+            }
             return
         }
         if (isValidUser) {
             val userId = dbHandler.getUserId(user)
-            if (userId == null) {
-                view?.connectionError()
-                return
+            withContext(Dispatchers.Main) {
+                if (userId == null) {
+                    view?.connectionError()
+                    return@withContext
+                }
+                view?.checkSavedSession()
+                view?.validUser(userId)
             }
-            view?.checkSavedSession()
-            view?.validUser(userId)
         } else {
-            view?.invalidUser()
+            withContext(Dispatchers.Main) {
+                view?.invalidUser()
+            }
         }
     }
 }

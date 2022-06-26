@@ -7,15 +7,13 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.audiovisualmanager.activity.AddGameActivity
+import com.example.audiovisualmanager.view.AddGameActivity
 import com.example.audiovisualmanager.database.MysqlManager
 import com.example.audiovisualmanager.databinding.ItemMainScreenAdapterBinding
 import com.example.audiovisualmanager.model.Game
-import com.example.audiovisualmanager.utils.Utils
 
 class GameAdapter(private var listData: ArrayList<Game>, var context: Context) :
     RecyclerView.Adapter<GameAdapter.ViewHolderData>() {
-    private var dbHandler: MysqlManager = MysqlManager().getInstance()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderData {
         val layoutInflater = LayoutInflater.from(parent.context)
         val itemListBinding: ItemMainScreenAdapterBinding =
@@ -81,13 +79,10 @@ class GameAdapter(private var listData: ArrayList<Game>, var context: Context) :
         RecyclerView.ViewHolder(itemListBinding.root) {
     }
 
-    fun removeAt(position: Int){
-        if (!dbHandler.deleteGame(listData[position].id)) {
-            Utils.connectionError(context)
-            return
-        }
+    fun removeAt(position: Int): Int {
         listData.removeAt(position)
         notifyItemRemoved(position)
+        return listData[position].id
     }
 
     fun notifyEditItem(context: Context, position: Int, userid: Int){

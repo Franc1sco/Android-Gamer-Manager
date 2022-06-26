@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.example.audiovisualmanager.activity.MainListActivity
+import com.example.audiovisualmanager.view.MainListActivity
 import com.example.audiovisualmanager.databinding.ItemUserlistScreenAdapterBinding
 import com.example.audiovisualmanager.model.User
 
@@ -23,12 +23,11 @@ class UserAdapter(private var listData: ArrayList<User>) :
         holder.itemListBinding.tvName.text = user.name
         holder.itemListBinding.tvName.setOnClickListener {
             if (listData[position].private == 1) {
-                Toast.makeText(
+                /*Toast.makeText(
                     it.context,
                     "This is private user",
                     Toast.LENGTH_SHORT
-                ).show()
-                // todo poner toast
+                ).show()*/
             } else {
                 val intent = Intent(it.context, MainListActivity::class.java)
                 intent.putExtra("USERID", listData[position].userid)
