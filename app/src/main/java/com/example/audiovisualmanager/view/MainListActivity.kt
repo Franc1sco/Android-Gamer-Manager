@@ -18,14 +18,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.audiovisualmanager.R
 import com.example.audiovisualmanager.databinding.ActivityMainlistBinding
 import com.example.audiovisualmanager.model.Game
-import com.example.audiovisualmanager.utils.Constants
+import com.example.audiovisualmanager.helper.Constants
 import com.example.audiovisualmanager.adapter.GameAdapter
-import com.example.audiovisualmanager.model.User
 import com.example.audiovisualmanager.presenter.interfaces.IMainListPresenter
 import com.example.audiovisualmanager.presenter.MainListPresenter
-import com.example.audiovisualmanager.utils.SwipeToDelete
-import com.example.audiovisualmanager.utils.SwipeToEdit
-import com.example.audiovisualmanager.utils.Utils
+import com.example.audiovisualmanager.helper.SwipeToDelete
+import com.example.audiovisualmanager.helper.SwipeToEdit
+import com.example.audiovisualmanager.helper.Utils
 import com.example.audiovisualmanager.view.interfaces.IMainListActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -150,9 +149,12 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
                     .setNegativeButton(getString(R.string.alert_dialog_no)){ view, _ ->
                         Toast.makeText(this@MainListActivity,getString(R.string.alert_dialog_denied_delete), Toast.LENGTH_LONG).show()
                         view.dismiss()
+                        binding.recyclerView.layoutManager = LinearLayoutManager(
+                            this@MainListActivity,
+                            LinearLayoutManager.VERTICAL, false
+                        )
                         binding.recyclerView.setHasFixedSize(true)
                     }
-
                     .setPositiveButton(getString(R.string.alert_dialog_yes)){ view,_ ->
                         val gameId = adapter.removeAt(pos)
                         showLoadingScreen(true)

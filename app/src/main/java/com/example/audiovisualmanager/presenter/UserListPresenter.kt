@@ -3,7 +3,6 @@ package com.example.audiovisualmanager.presenter
 import android.app.Activity
 import com.example.audiovisualmanager.database.MysqlManager
 import com.example.audiovisualmanager.presenter.interfaces.IUserListPresenter
-import com.example.audiovisualmanager.utils.Utils
 import com.example.audiovisualmanager.view.interfaces.IUserListActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

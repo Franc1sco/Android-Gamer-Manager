@@ -11,8 +11,8 @@ import com.example.audiovisualmanager.databinding.RegisterActivityBinding
 import com.example.audiovisualmanager.model.User
 import com.example.audiovisualmanager.presenter.RegisterPresenter
 import com.example.audiovisualmanager.presenter.interfaces.IRegisterPresenter
-import com.example.audiovisualmanager.utils.Constants
-import com.example.audiovisualmanager.utils.Utils
+import com.example.audiovisualmanager.helper.Constants
+import com.example.audiovisualmanager.helper.Utils
 import com.example.audiovisualmanager.view.interfaces.IRegisterActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

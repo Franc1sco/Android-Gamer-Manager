@@ -1,4 +1,4 @@
-package com.example.audiovisualmanager.utils
+package com.example.audiovisualmanager.helper
 
 import android.content.Context
 import android.graphics.*
@@ -8,20 +8,21 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.audiovisualmanager.R
 
-abstract class SwipeToEdit(context: Context) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
-    //Esta clase nos permite desplazar el dedo hacia la derecha y que cambie lo que se muestra
+abstract class SwipeToDelete(context: Context) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+    //Esta clase nos permite desplazar el dedo hacia la izquierda y que cambie lo que se muestra
 
-    private val editIcon = ContextCompat.getDrawable(context, R.drawable.ic_baseline_edit_24)
-    private val intrinsicWidth = editIcon!!.intrinsicWidth
-    private val intrinsicHeight = editIcon!!.intrinsicHeight
+    private val deleteIcon = ContextCompat.getDrawable(context, R.drawable.ic_baseline_edit_24)
+    private val intrinsicWidth = deleteIcon!!.intrinsicWidth
+    private val intrinsicHeight = deleteIcon!!.intrinsicHeight
     private val background = ColorDrawable()
-    private val backgroundColor = Color.parseColor("#24AE05")
+    private val backgroundColor = Color.parseColor("#f44336")
     private val clearPaint = Paint().apply { xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR) }
 
     override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
         return false
     }
-    //Sobreescribiendo este método mostramos un fondo verde con el icono de editar
+
+    //Sobreescribiendo este método mostramos un fondo rojo con el icono de borrar
     override fun onChildDraw(
             c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
             dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean
@@ -38,8 +39,8 @@ abstract class SwipeToEdit(context: Context) : ItemTouchHelper.SimpleCallback(0,
         }
 
 
-        background.color = backgroundColor
-        background.setBounds(itemView.left + dX.toInt(), itemView.top, itemView.left, itemView.bottom)
+        background.color=backgroundColor
+        background.setBounds(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
         background.draw(c)
 
 
@@ -50,8 +51,8 @@ abstract class SwipeToEdit(context: Context) : ItemTouchHelper.SimpleCallback(0,
         val editIconBottom = editIconTop + intrinsicHeight
 
 
-        editIcon!!.setBounds(editIconLeft, editIconTop, editIconRight, editIconBottom)
-        editIcon.draw(c)
+        deleteIcon!!.setBounds(editIconLeft, editIconTop, editIconRight, editIconBottom)
+        deleteIcon.draw(c)
 
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
     }

@@ -1,4 +1,4 @@
-package com.example.audiovisualmanager.utils
+package com.example.audiovisualmanager.helper
 
 import android.content.Context
 import android.widget.Toast

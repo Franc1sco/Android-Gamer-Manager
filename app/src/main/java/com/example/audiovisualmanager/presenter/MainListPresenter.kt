@@ -4,7 +4,7 @@ import android.app.Activity
 import com.example.audiovisualmanager.database.MysqlManager
 import com.example.audiovisualmanager.model.Game
 import com.example.audiovisualmanager.presenter.interfaces.IMainListPresenter
-import com.example.audiovisualmanager.utils.Constants
+import com.example.audiovisualmanager.helper.Constants
 import com.example.audiovisualmanager.view.interfaces.IMainListActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

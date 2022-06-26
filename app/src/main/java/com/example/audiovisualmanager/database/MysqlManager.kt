@@ -1,7 +1,5 @@
 package com.example.audiovisualmanager.database
 
-import android.os.StrictMode
-import android.os.StrictMode.ThreadPolicy
 import com.example.audiovisualmanager.model.User
 import java.sql.*
 import java.util.*
@@ -11,7 +9,7 @@ import com.example.audiovisualmanager.model.Game
 class MysqlManager {
     companion object {
         val instance = MysqlManager()
-        //Declaramos el nombre de la base de datos y su version
+        //Declaramos el nombre de la base de datos
         private const val DATABASE_NAME = "AudiovisualManagerDatabase"
 
         //Declaramos los nombre de las tablas
@@ -26,10 +24,11 @@ class MysqlManager {
         private const val PASSWORD_USER = "password"
         private const val PRIVATE_USER = "private"
 
+        //TABLA UserGames intermediaria
         private const val GAMEID = "gameid"
         private const val GAMEVALIDATED = "validated"
 
-        //TABLA PENDING
+        //TABLA GAMES
         private const val GAME_NAME = "name"
         private const val GAME_PLATFORM = "platform"
         private const val GAME_GENRE = "genre"
@@ -42,17 +41,14 @@ class MysqlManager {
 
     }
 
+    //Declaramos un singleton para no tener que hacer varias instancias
     fun getInstance(): MysqlManager {
         return instance
     }
     private var conn: Connection? = null
-    private var username = "android" // provide the username
-    private var password = "Android1313!" // provide the corresponding password
+    private var username = "android" // Usuario de la base de datos
+    private var password = "Android1313!" // Contraseña de la base de datos
     fun getConnection(): Boolean {
-        val policy = ThreadPolicy.Builder().permitAll().build()
-
-        StrictMode.setThreadPolicy(policy)
-
         var noError = true
         val connectionProps = Properties()
         connectionProps["user"] = username
@@ -67,11 +63,9 @@ class MysqlManager {
                 connectionProps)
         } catch (ex: SQLException) {
             noError = false
-            // handle any errors
             ex.printStackTrace()
         } catch (ex: Exception) {
             noError = false
-            // handle any errors
             ex.printStackTrace()
         }
         finally {
@@ -113,7 +107,6 @@ class MysqlManager {
             stmt?.executeQuery(query)
 
         } catch (ex: SQLException) {
-            // handle any errors
             noError = false
             ex.printStackTrace()
         } finally {
@@ -143,7 +136,6 @@ class MysqlManager {
             isValid = queryResults?.next() == true
 
         } catch (ex: SQLException) {
-            // handle any errors
             ex.printStackTrace()
         } finally {
             if (stmt != null) {
@@ -201,7 +193,6 @@ class MysqlManager {
             isValid = resultSet?.next() == true
 
         } catch (ex: SQLException) {
-            // handle any errors
             ex.printStackTrace()
         } finally {
             if (stmt != null) {
@@ -253,7 +244,6 @@ class MysqlManager {
             }
 
         } catch (ex: SQLException) {
-            // handle any errors
             ex.printStackTrace()
         } finally {
             if (stmt != null) {
@@ -286,7 +276,6 @@ class MysqlManager {
             }
 
         } catch (ex: SQLException) {
-            // handle any errors
             ex.printStackTrace()
         } finally {
             if (stmt != null) {
@@ -328,7 +317,6 @@ class MysqlManager {
             stmt?.executeQuery(query)
 
         } catch (ex: SQLException) {
-            // handle any errors
             noError = false
             ex.printStackTrace()
         } finally {
@@ -359,7 +347,6 @@ class MysqlManager {
             stmt?.executeQuery(query)
 
         } catch (ex: SQLException) {
-            // handle any errors
             noError = false
             ex.printStackTrace()
         } finally {
@@ -385,7 +372,6 @@ class MysqlManager {
             stmt?.executeQuery(query)
 
         } catch (ex: SQLException) {
-            // handle any errors
             noError = false
             ex.printStackTrace()
         } finally {
@@ -425,7 +411,6 @@ class MysqlManager {
             }
 
         } catch (ex: SQLException) {
-            // handle any errors
             ex.printStackTrace()
         } finally {
             if (stmt != null) {
@@ -457,7 +442,6 @@ class MysqlManager {
             stmt?.executeQuery(query)
 
         } catch (ex: SQLException) {
-            // handle any errors
             noError = false
             ex.printStackTrace()
         } finally {
@@ -492,7 +476,6 @@ class MysqlManager {
             }
 
         } catch (ex: SQLException) {
-            // handle any errors
             ex.printStackTrace()
         } finally {
             if (stmt != null) {

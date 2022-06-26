@@ -12,8 +12,8 @@ import com.example.audiovisualmanager.R
 import com.example.audiovisualmanager.databinding.EdituserActivityBinding
 import com.example.audiovisualmanager.presenter.EditUserPresenter
 import com.example.audiovisualmanager.presenter.interfaces.IEditUserPresenter
-import com.example.audiovisualmanager.utils.Constants
-import com.example.audiovisualmanager.utils.Utils
+import com.example.audiovisualmanager.helper.Constants
+import com.example.audiovisualmanager.helper.Utils
 import com.example.audiovisualmanager.view.interfaces.IEditUserActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

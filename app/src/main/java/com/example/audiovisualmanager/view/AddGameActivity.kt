@@ -16,12 +16,11 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.example.audiovisualmanager.R
-import com.example.audiovisualmanager.database.MysqlManager
 import com.example.audiovisualmanager.databinding.AddgameActivityBinding
 import com.example.audiovisualmanager.model.Game
 import com.example.audiovisualmanager.presenter.AddGamePresenter
 import com.example.audiovisualmanager.presenter.interfaces.IAddGamePresenter
-import com.example.audiovisualmanager.utils.Utils
+import com.example.audiovisualmanager.helper.Utils
 import com.example.audiovisualmanager.view.interfaces.IAddGameActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

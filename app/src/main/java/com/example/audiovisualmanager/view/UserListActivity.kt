@@ -13,8 +13,8 @@ import com.example.audiovisualmanager.databinding.UserlistActivityBinding
 import com.example.audiovisualmanager.model.User
 import com.example.audiovisualmanager.presenter.UserListPresenter
 import com.example.audiovisualmanager.presenter.interfaces.IUserListPresenter
-import com.example.audiovisualmanager.utils.Constants
-import com.example.audiovisualmanager.utils.Utils
+import com.example.audiovisualmanager.helper.Constants
+import com.example.audiovisualmanager.helper.Utils
 import com.example.audiovisualmanager.view.interfaces.IUserListActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -92,14 +92,12 @@ class UserListActivity : AppCompatActivity(), IUserListActivity {
     }
 
     private fun setupAdapter() {
-        //showLoadingScreen(true)
+        showLoadingScreen(true)
         lifecycleScope.launch(Dispatchers.Main) {
             withContext(Dispatchers.IO) {
                 presenter.getUserList(userId)
             }
-        }.invokeOnCompletion {
-            //showLoadingScreen(false)
-        }
+        }.invokeOnCompletion { showLoadingScreen(false) }
     }
 
     override fun loadUserList(userList: ArrayList<User>) {
