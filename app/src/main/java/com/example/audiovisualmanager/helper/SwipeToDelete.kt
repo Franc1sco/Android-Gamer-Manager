@@ -12,8 +12,8 @@ abstract class SwipeToDelete(context: Context) : ItemTouchHelper.SimpleCallback(
     //Esta clase nos permite desplazar el dedo hacia la izquierda y que cambie lo que se muestra
 
     private val deleteIcon = ContextCompat.getDrawable(context, R.drawable.ic_baseline_edit_24)
-    private val intrinsicWidth = deleteIcon!!.intrinsicWidth
-    private val intrinsicHeight = deleteIcon!!.intrinsicHeight
+    private val intrinsicWidth = deleteIcon?.intrinsicWidth
+    private val intrinsicHeight = deleteIcon?.intrinsicHeight
     private val background = ColorDrawable()
     private val backgroundColor = Color.parseColor("#f44336")
     private val clearPaint = Paint().apply { xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR) }
@@ -27,7 +27,6 @@ abstract class SwipeToDelete(context: Context) : ItemTouchHelper.SimpleCallback(
             c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
             dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean
     ) {
-
         val itemView = viewHolder.itemView
         val itemHeight = itemView.bottom - itemView.top
         val isCanceled = dX == 0f && !isCurrentlyActive
@@ -38,11 +37,11 @@ abstract class SwipeToDelete(context: Context) : ItemTouchHelper.SimpleCallback(
             return
         }
 
-
         background.color=backgroundColor
         background.setBounds(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
         background.draw(c)
 
+        if (intrinsicHeight == null || intrinsicWidth == null) return
 
         val editIconTop = itemView.top + (itemHeight - intrinsicHeight) / 2
         val editIconMargin = (itemHeight - intrinsicHeight)
@@ -50,9 +49,8 @@ abstract class SwipeToDelete(context: Context) : ItemTouchHelper.SimpleCallback(
         val editIconRight = itemView.left + editIconMargin
         val editIconBottom = editIconTop + intrinsicHeight
 
-
-        deleteIcon!!.setBounds(editIconLeft, editIconTop, editIconRight, editIconBottom)
-        deleteIcon.draw(c)
+        deleteIcon?.setBounds(editIconLeft, editIconTop, editIconRight, editIconBottom)
+        deleteIcon?.draw(c)
 
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
     }
