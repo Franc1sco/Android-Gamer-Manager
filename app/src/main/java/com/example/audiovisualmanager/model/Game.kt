@@ -8,6 +8,5 @@ data class Game(
     val company: String,
     val genre: String,
     val valoration: Int,
-    val image: String? = null,
-    val description: String? = null
+    val image: String? = null
 )
