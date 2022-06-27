@@ -18,6 +18,7 @@ abstract class SwipeToDelete(context: Context) : ItemTouchHelper.SimpleCallback(
     private val backgroundColor = Color.parseColor("#f44336")
     private val clearPaint = Paint().apply { xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR) }
 
+    // Llamada cuando el usuario arrastra una vista hacia la izquierda o derecha.
     override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
         return false
     }
@@ -55,6 +56,7 @@ abstract class SwipeToDelete(context: Context) : ItemTouchHelper.SimpleCallback(
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
     }
 
+    // Este método se llama cuando el usuario suelta el dedo de la pantalla.
     private fun clearCanvas(c: Canvas?, left: Float, top: Float, right: Float, bottom: Float) {
         c?.drawRect(left, top, right, bottom, clearPaint)
     }

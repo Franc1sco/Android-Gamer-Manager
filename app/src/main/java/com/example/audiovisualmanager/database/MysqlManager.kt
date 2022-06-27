@@ -45,15 +45,18 @@ class MysqlManager {
     fun getInstance(): MysqlManager {
         return instance
     }
-    private var conn: Connection? = null
+    private var conn: Connection? = null // variable de conexion
     private var username = "android" // Usuario de la base de datos
     private var password = "Android1313!" // Contraseña de la base de datos
+
+    //Metodo para conectar a la base de datos
     fun getConnection(): Boolean {
-        var noError = true
-        val connectionProps = Properties()
-        connectionProps["user"] = username
-        connectionProps["password"] = password
+        var noError = true // variable para controlar si hay error
+        val connectionProps = Properties() // variable para guardar las propiedades de la conexion
+        connectionProps["user"] = username // asignamos el usuario de la base de datos
+        connectionProps["password"] = password // asignamos la contraseña de la base de datos
         try {
+            // intentamos conectar a la base de datos
             Class.forName("org.mariadb.jdbc.Driver").newInstance()
             conn = DriverManager.getConnection(
                 "jdbc:" + "mariadb" + "://" +
@@ -62,13 +65,16 @@ class MysqlManager {
                         DATABASE_NAME,
                 connectionProps)
         } catch (ex: SQLException) {
+            // si hay error, lo guardamos en la variable noError
             noError = false
             ex.printStackTrace()
         } catch (ex: Exception) {
+            // si hay error, lo guardamos en la variable noError
             noError = false
             ex.printStackTrace()
         }
         finally {
+            // al finalizar sin error, y si no hay error, ejecutamos el metodo de generar tablas
             if (noError) {
                 noError = executeMySQLQueryCreation()
             }
@@ -76,10 +82,12 @@ class MysqlManager {
         return noError
     }
 
+    //Metodo para crear las tablas
     private fun executeMySQLQueryCreation(): Boolean {
-        var stmt: Statement? = null
-        var noError = true
+        var stmt: Statement? = null // variable para ejecutar las consultas
+        var noError = true // variable para controlar si hay error
         try {
+            // intentamos ejecutar las consultas de las 3 tablas
             stmt = conn?.createStatement()
             var query = ("CREATE TABLE IF NOT EXISTS " + TABLE_USER + "("
                     + ID + " INT NOT NULL AUTO_INCREMENT PRIMARY KEY, "
@@ -107,9 +115,11 @@ class MysqlManager {
             stmt?.executeQuery(query)
 
         } catch (ex: SQLException) {
+            // si hay error, lo guardamos en la variable noError
             noError = false
             ex.printStackTrace()
         } finally {
+            // al finalizar sin error, cerramos la conexion
             if (stmt != null) {
                 try {
                     stmt.close()
@@ -120,24 +130,30 @@ class MysqlManager {
         return noError
     }
 
+    //Metodo para comprobar si el usuario existe
     fun isValidUser(username: String, password: String): Boolean? {
+        // comprobamos que username y password no esten vacios
         if (username.isEmpty() || password.isEmpty()) {
             return false
         }
-        var isValid: Boolean? = null
-        var stmt: Statement? = null
-        var queryResults: ResultSet? = null
+        var isValid: Boolean? // variable para controlar si hay error
+        var stmt: Statement? = null // variable para ejecutar las consultas
+        var queryResults: ResultSet? = null // variable para guardar los resultados de las consultas
 
         try {
+            // intentamos ejecutar la consulta
             stmt = conn?.createStatement()
             val query = ("SELECT $NICK_USER FROM $TABLE_USER WHERE $NICK_USER = '$username' AND $PASSWORD_USER = '$password'")
             queryResults = stmt?.executeQuery(query)
 
-            isValid = queryResults?.next() == true
+            isValid = queryResults?.next() == true // si hay resultados, isValid es true
 
         } catch (ex: SQLException) {
+            // si hay error, lo guardamos en la variable isValid
+            isValid = false
             ex.printStackTrace()
         } finally {
+            // al finalizar sin error, cerramos la conexion
             if (stmt != null) {
                 try {
                     stmt.close()
@@ -155,6 +171,7 @@ class MysqlManager {
         return isValid
     }
 
+    // Metodo para registrar un usuario
     fun addUser(user: User): Boolean {
         var stmt: Statement? = null
         var noError = true
@@ -177,11 +194,13 @@ class MysqlManager {
         return noError
     }
 
+    // Metodo para comprobar si el usuario ya existe
     fun checkUserExists(username: String): Boolean? {
+        // comprobamos que username no este vacio
         if (username.isEmpty()) {
             return false
         }
-        var isValid: Boolean? = null
+        var isValid: Boolean?
         var stmt: Statement? = null
         var resultSet: ResultSet? = null
 
@@ -189,10 +208,11 @@ class MysqlManager {
             stmt = conn?.createStatement()
             val query = ("SELECT $NICK_USER FROM $TABLE_USER WHERE $NICK_USER = '$username'")
             resultSet = stmt?.executeQuery(query)
-
+            
             isValid = resultSet?.next() == true
 
         } catch (ex: SQLException) {
+            isValid = null
             ex.printStackTrace()
         } finally {
             if (stmt != null) {
@@ -212,6 +232,7 @@ class MysqlManager {
         return isValid
     }
 
+    // Metodo para obtener la lista de juegos de un usuario y ordenarlos
     fun getGamesPendingByUserid(userid: Int, order: String? = null, ascOrder: Boolean = true): ArrayList<Game>? {
         var stmt: Statement? = null
         var resultSet: ResultSet? = null
@@ -263,6 +284,7 @@ class MysqlManager {
         return games
     }
 
+    // Metodo para obtener la id de un usuario
     fun getUserId(username: String): Int? {
         var stmt: Statement? = null
         var resultSet: ResultSet? = null
@@ -296,9 +318,11 @@ class MysqlManager {
 
     }
 
+    // Metodo para añadir un juego a un usuario
     fun addGameByUserid(game: Game, userid: Int): Boolean {
         var stmt: Statement? = null
         var resultSet: ResultSet? = null
+        // comprobamos que la imagen no este vacia
         val image = if(game.image.isNullOrEmpty()) "" else game.image
         var noError = true
         try {
@@ -307,12 +331,14 @@ class MysqlManager {
                     ") VALUES ('${game.name}', '$image', '${game.company}', '${game.genre}')"
             stmt?.executeQuery(query)
 
+            // obtenemos el id del juego insertado
             query = "SELECT LAST_INSERT_ID() AS $GAMEID"
             resultSet = stmt?.executeQuery(query)
             var gameid = 0
             if (resultSet?.next() == true) {
                 gameid = resultSet.getInt(GAMEID)
             }
+            // añadimos el juego al usuario en la tabla intermedia de relacion
             query = "INSERT INTO $TABLE_USERGAMES ($GAMEID, $GAME_STATUS, $GAME_POINTS, $GAME_USERID, $GAME_PLATFORM)" +
                     "VALUES ($gameid, '${game.status}', ${game.valoration}, $userid, '${game.platform}')"
             stmt?.executeQuery(query)
@@ -337,6 +363,7 @@ class MysqlManager {
         return noError
     }
 
+    // Metodo para actualizar los datos de un usuario
     fun updateUser(userid: Int, password: String, private : Boolean): Boolean {
         var stmt: Statement? = null
         var noError = true
@@ -361,14 +388,17 @@ class MysqlManager {
         return noError
     }
 
+    // metodo para borrar un juego de un usuario
     fun deleteGame(gameid: Int): Boolean {
         var stmt: Statement? = null
         var noError = true
         try {
             stmt = conn?.createStatement()
+            // borramos el juego de la tabla intermedia de relacion
             var query = ("DELETE FROM $TABLE_USERGAMES WHERE $GAMEID = $gameid")
             stmt?.executeQuery(query)
 
+            // borramos el juego de la tabla de juegos
             query = ("DELETE FROM $TABLE_GAMES WHERE $GAMEID = $gameid")
             stmt?.executeQuery(query)
 
@@ -386,12 +416,14 @@ class MysqlManager {
         return noError
     }
 
+    // Metodo para obtener el juego de un usuario
     fun getGameById(gameid: Int): Game? {
         var stmt: Statement? = null
         var resultSet: ResultSet? = null
         var game: Game? = null
         try {
             stmt = conn?.createStatement()
+            // Mediante innerjoins obtenemos el juego y su usuario
             val query = ("SELECT T1.$GAME_NAME AS $GAME_NAME, T2.$GAME_STATUS AS $GAME_STATUS, T2.$GAME_PLATFORM AS $GAME_PLATFORM," +
                     "T1.$GAMEID AS $GAMEID, T1.$GAME_COMPANY AS $GAME_COMPANY," +
                     "T1.$GAME_GENRE AS $GAME_GENRE, T2.$GAME_POINTS AS $GAME_POINTS, T1.$GAME_IMAGE AS $GAME_IMAGE " +
@@ -430,15 +462,18 @@ class MysqlManager {
         return game
     }
 
+    // Metodo para actualizar el juego de un usuario
     fun updateGame(game: Game): Boolean {
         var stmt: Statement? = null
         val image = if(game.image.isNullOrEmpty()) "" else game.image
         var noError = true
         try {
             stmt = conn?.createStatement()
+            // actualizamos el juego en la tabla de juegos
             var query = ("UPDATE $TABLE_GAMES SET $GAME_NAME = '${game.name}', $GAME_IMAGE = '$image', $GAME_COMPANY = '${game.company}', $GAME_GENRE = '${game.genre}' WHERE $GAMEID = ${game.id}")
             stmt?.executeQuery(query)
 
+            // actualizamos el juego en la tabla intermedia de relacion
             query = ("UPDATE $TABLE_USERGAMES SET $GAME_STATUS = '${game.status}', $GAME_POINTS = ${game.valoration}, $GAME_PLATFORM = '${game.platform}' WHERE $GAMEID = ${game.id}")
             stmt?.executeQuery(query)
 
@@ -456,6 +491,7 @@ class MysqlManager {
         return noError
     }
 
+    // Metodo para obtener la lista de usuarios
     fun getUserList(exception: Int): ArrayList<User>? {
         var stmt: Statement? = null
         var resultSet: ResultSet? = null

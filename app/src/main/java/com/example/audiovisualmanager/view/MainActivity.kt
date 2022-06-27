@@ -21,22 +21,50 @@ import kotlinx.coroutines.withContext
 class MainActivity : AppCompatActivity(), IMainActivity {
     private lateinit var binding: ActivityMainBinding
     private var presenter: IMainPresenter = MainPresenter()
+
+    // Metodo que se ejecuta al iniciarse la actividad
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         presenter.attachView(this)
 
-        getSavedSession()
+        loadViews()
+    }
 
+    // metodo que carga los views
+    private fun loadViews() {
+        getSavedSession()
+        getDatabaseConnection()
+        setupListeners()
+    }
+
+    // metodo que obtiene la sesion guardada en el dispositivo
+    private fun getSavedSession() {
+        val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
+        val user = sharedPref.getString("USER", null)
+        val password = sharedPref.getString("PASSWORD", null)
+        if (user != null && password != null) {
+            binding.editTextUser.setText(user)
+            binding.editTextPassword.setText(password)
+            binding.checkBoxSaveSession.isChecked = true
+        }
+    }
+
+    // metodo que obtiene la conexion a la base de datos y crea las tablas si no existieran
+    private fun getDatabaseConnection() {
         showLoadingScreen(true)
         lifecycleScope.launch(Dispatchers.Main) {
             withContext(Dispatchers.IO) {
                 presenter.getConnection()
             }
         }.invokeOnCompletion { showLoadingScreen(false) }
+    }
 
+    // metodo que configura los listeners de los views
+    private fun setupListeners() {
         binding.buttonLogin.setOnClickListener {
+            // hace una validacion de los campos de usuario y contraseña comprobando que existen en base de datos
             showLoadingScreen(true)
             lifecycleScope.launch(Dispatchers.Main) {
                 withContext(Dispatchers.IO) {
@@ -49,10 +77,12 @@ class MainActivity : AppCompatActivity(), IMainActivity {
         }
 
         binding.buttonRegister.setOnClickListener {
+            // abre la actividad de registro
             startActivity(Intent(this, RegisterActivity::class.java))
         }
 
         binding.cbShowPassword.setOnClickListener {
+            // muestra o oculta la contraseña del campo de contraseña
             if (binding.cbShowPassword.isChecked) {
                 binding.editTextPassword.inputType = TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
             } else {
@@ -61,27 +91,19 @@ class MainActivity : AppCompatActivity(), IMainActivity {
         }
     }
 
-    private fun getSavedSession() {
-        val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
-        val user = sharedPref.getString("USER", null)
-        val password = sharedPref.getString("PASSWORD", null)
-        if (user != null && password != null) {
-            binding.editTextUser.setText(user)
-            binding.editTextPassword.setText(password)
-            binding.checkBoxSaveSession.isChecked = true
-        }
-    }
-
+    // Metodo al destruirse la actividad para liberar los recursos
     @Override
     override fun onDestroy() {
         presenter.detachView()
         super.onDestroy()
     }
 
+    // Metodo que muestra error de conexion a la base de datos
     override fun connectionError() {
         Utils.connectionError(this)
     }
 
+    // Metodo que guarda la sesion en el dispositivo si el usuario lo ha marcado
     override fun checkSavedSession() {
         val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
         if (binding.checkBoxSaveSession.isChecked) {
@@ -93,16 +115,19 @@ class MainActivity : AppCompatActivity(), IMainActivity {
         }
     }
 
+    // Metodo que muestra mensaje de error en el login
     override fun invalidUser() {
         Utils.showMessage(this, getString(R.string.invalid_user_pass))
     }
 
+    // Metodo que ejecuta la siguiente actividad si el usuario es valido
     override fun validUser(userId: Int) {
         val intent = Intent(this, MainListActivity::class.java)
         intent.putExtra("USERID", userId)
         startActivity(intent)
     }
 
+    // Metodo que muestra una pantalla de carga mientras se ejecuta una operacion
     private fun showLoadingScreen(visibleLoading: Boolean) {
         if (visibleLoading) {
             binding.progressBar.visibility = View.VISIBLE

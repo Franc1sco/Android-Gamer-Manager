@@ -13,6 +13,8 @@ import com.example.audiovisualmanager.model.Game
 
 class GameAdapter(private var listData: ArrayList<Game>, var context: Context) :
     RecyclerView.Adapter<GameAdapter.ViewHolderData>() {
+
+    // el metodo onCreateViewHolder es el que se ejecuta cuando se crea un nuevo viewholder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderData {
         val layoutInflater = LayoutInflater.from(parent.context)
         val itemListBinding: ItemMainScreenAdapterBinding =
@@ -20,6 +22,7 @@ class GameAdapter(private var listData: ArrayList<Game>, var context: Context) :
         return ViewHolderData(itemListBinding)
     }
 
+    // el metodo onBindViewHolder es el que se ejecuta cuando se carga un viewholder y es donde se cargan los datos
     override fun onBindViewHolder(holder: ViewHolderData, position: Int) {
         val game: Game = listData[position]
         holder.itemListBinding.tvName.text = game.name
@@ -30,6 +33,7 @@ class GameAdapter(private var listData: ArrayList<Game>, var context: Context) :
         setupRate(holder, game.valoration)
     }
 
+    // segun la valoracion se carga la imagen correspondiente
     private fun setupRate(holder: ViewHolderData, valoration: Int) {
         holder.itemListBinding.ivStar1.setImageResource(
             if (valoration >= 1) android.R.drawable.star_big_on
@@ -53,20 +57,24 @@ class GameAdapter(private var listData: ArrayList<Game>, var context: Context) :
         )
     }
 
+    // el metodo getItemCount es el que se ejecuta cuando se necesita saber la cantidad de elementos que tiene el recyclerView
     override fun getItemCount(): Int {
         return listData.size
     }
 
+    // el xml que le cargamos a la vista
     class ViewHolderData(var itemListBinding: ItemMainScreenAdapterBinding) :
         RecyclerView.ViewHolder(itemListBinding.root) {
     }
 
+    // eliminamos un elemento de la lista
     fun removeAt(position: Int): Int {
         listData.removeAt(position)
         notifyItemRemoved(position)
         return listData[position].id
     }
 
+    // cuando se notifica la edicion de un elemento hacemos llamada a otra activity para ello
     fun notifyEditItem(context: Context, position: Int, userid: Int){
         val intent2= Intent(context, AddGameActivity::class.java)
         intent2.putExtra("GAMEID", listData[position].id)

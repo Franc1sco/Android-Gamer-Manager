@@ -23,6 +23,8 @@ class EditUserActivity: AppCompatActivity(), IEditUserActivity {
     private lateinit var binding: EdituserActivityBinding
     private var userId: Int = 0
     private var presenter: IEditUserPresenter = EditUserPresenter()
+
+    // metodo que se ejecuta al iniciar la actividad
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = EdituserActivityBinding.inflate(layoutInflater)
@@ -32,22 +34,32 @@ class EditUserActivity: AppCompatActivity(), IEditUserActivity {
         loadViews()
     }
 
+    // Método donde se destruye la actividad y se liberan los recursos
     @Override
     override fun onDestroy() {
         presenter.detachView()
         super.onDestroy()
     }
 
+    // Método que carga las vistas de la actividad
     private fun loadViews() {
         setupPrivateSpinner()
         if(intent.hasExtra("USERID")){
             userId=intent.getIntExtra("USERID", 0)
         }
 
+        setupClickListeners()
+    }
+
+    // Metodo donde se cargan los listeners de los botones de la actividad
+    private fun setupClickListeners() {
+        // Boton de guardar cambios
         binding.buttonUpdatePassword.setOnClickListener {
+            // Se valida que los campos no esten vacios
             if (binding.editPasswordUpdate.text.toString().isNotEmpty()
                 && binding.editPasswordUpdate.text.toString() == binding.editPasswordUpdateRepeat.text.toString()) {
 
+                // Se llama al metodo de actualizar contraseña en un hilo diferente al principal con el presenter
                 showLoadingScreen(true)
                 lifecycleScope.launch(Dispatchers.Main) {
                     withContext(Dispatchers.IO) {
@@ -62,6 +74,7 @@ class EditUserActivity: AppCompatActivity(), IEditUserActivity {
         }
 
         binding.cbShowPasswordUpdate.setOnClickListener {
+            // Se cambia el tipo de input de la contraseña
             if (binding.cbShowPasswordUpdate.isChecked) {
                 binding.editPasswordUpdate.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
                 binding.editPasswordUpdateRepeat.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
@@ -72,12 +85,14 @@ class EditUserActivity: AppCompatActivity(), IEditUserActivity {
         }
 
         binding.buttonViewUsers.setOnClickListener {
+            // Se llama a la actividad de lista de usuarios
             val intent2= Intent (this , UserListActivity::class.java)
             intent2.putExtra("USERID", userId)
             startActivity(intent2)
         }
     }
 
+    // Metodo que muestra la pantalla de carga
     private fun showLoadingScreen(visibleLoading: Boolean) {
         if (visibleLoading) {
             binding.progressBar.visibility = View.VISIBLE
@@ -88,14 +103,17 @@ class EditUserActivity: AppCompatActivity(), IEditUserActivity {
         }
     }
 
+    // Metodo que carga el spinner de privacidad del usuario
     private fun setupPrivateSpinner() {
         binding.spinnerUpdatePrivate.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, resources.getStringArray(R.array.user_status_array))
     }
 
+    // Metodo que muestra error de conexion
     override fun connectionError() {
         Utils.connectionError(this)
     }
 
+    // metodo que se ejecuta al terminar de actualizar la contraseña y se cierra la actividad volviendo a la actividad anterior
     override fun updateUserSuccess() {
         Toast.makeText(this, getString(R.string.password_updated), Toast.LENGTH_SHORT).show()
         val intent2= Intent (this , MainListActivity::class.java)
@@ -104,6 +122,7 @@ class EditUserActivity: AppCompatActivity(), IEditUserActivity {
         finish()
     }
 
+    // Metodo que se ejecuta cuando el usuario da al boton de volver de la actividad anterior
     @Override
     override fun onBackPressed() {
         val intent2= Intent (this , MainListActivity::class.java)

@@ -41,6 +41,8 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
     private var isViewer: Boolean = false
     private var viewerName = ""
     private var presenter: IMainListPresenter = MainListPresenter()
+
+    // Metodo que se ejecuta al iniciar la actividad
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainlistBinding.inflate(layoutInflater)
@@ -50,6 +52,7 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
         loadViews()
     }
 
+    // Metodo que carga las vistas
     private fun loadViews() {
         if(intent.hasExtra("USERID")){
             userId=intent.getIntExtra("USERID", 0)
@@ -62,6 +65,7 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
             viewerName=intent.getStringExtra("VIEWERNAME") ?: ""
         }
 
+        // Oculta los botones de agregar y configurar si es un usuario que esta viendo la lista
         if (isViewer) {
             binding.AddGame.visibility = View.INVISIBLE
             binding.AddGame.isEnabled = false
@@ -75,11 +79,14 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
         setupAscListener()
     }
 
+    // Metodo que carga el listener de la flecha de ordenamiento
     private fun setupAscListener() {
         binding.ivOrderAsc.setOnClickListener{
+            // Cambia el icono de la flecha
             binding.ivOrderAsc.visibility = View.GONE
             binding.ivOrderDesc.visibility = View.VISIBLE
             showLoadingScreen(true)
+            // Cambia el orden de la lista haciendo llamada a la base de datos para ordenarla
             lifecycleScope.launch(Dispatchers.Main) {
                 withContext(Dispatchers.IO) {
                     presenter.orderList(
@@ -90,6 +97,7 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
                 }
             }.invokeOnCompletion { showLoadingScreen(false) }
         }
+        // lo mismo que el anterior pero con otra imagen
         binding.ivOrderDesc.setOnClickListener{
             binding.ivOrderDesc.visibility = View.GONE
             binding.ivOrderAsc.visibility = View.VISIBLE
@@ -105,6 +113,7 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
             }.invokeOnCompletion { showLoadingScreen(false) }        }
     }
 
+    // Carga el spinner principal con la lista de juegos
     private fun setupAdapter() {
         binding.recyclerView.layoutManager = LinearLayoutManager(
             this,
@@ -112,11 +121,13 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
         )
         loadMainList()
 
+        // si es un usuario que esta viendo la lista, no se puede editar ni borrar
         if (isViewer) return
 
         setupSwipes()
     }
 
+    // Metodo para cargar los listeners de ordenar, el estado de los juegos y agregar o editar usuario
     private fun setupListeners() {
         binding.statusList.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
@@ -145,6 +156,7 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
         }
 
         binding.AddGame.setOnClickListener{
+            // Vamos a la actividad de agregar juego
             val intent2= Intent (this , AddGameActivity::class.java)
             intent2.putExtra("USERID", userId)
             startActivity(intent2)
@@ -152,6 +164,7 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
         }
 
         binding.UserConfig.setOnClickListener{
+            // Vamos a la actividad de configurar usuario
             val intent2= Intent (this , EditUserActivity::class.java)
             intent2.putExtra("USERID", userId)
             startActivity(intent2)
@@ -159,6 +172,7 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
         }
     }
 
+    // Metodo que configura los gestos de swipe para borrar y editar
     private fun setupSwipes() {
         val editSwipeHandler = object : SwipeToEdit(this) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
@@ -210,6 +224,7 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
         deleteItemTouchHelper.attachToRecyclerView(binding.recyclerView)
     }
 
+    // Metodo para ordenar la lista de juegos
     private fun listOrderBy(position: Int) {
         if (position == 0) {
             return
@@ -222,6 +237,7 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
         }.invokeOnCompletion { showLoadingScreen(false) }
     }
 
+    // Metodo para cargar la lista de juegos principal
     private fun loadMainList() {
         showLoadingScreen(true)
         lifecycleScope.launch(Dispatchers.Main) {
@@ -234,6 +250,7 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
         }
     }
 
+    // Metodo para configurar el spinner de orden y hacer que el primer elemento sea gris de titulo
     private fun loadOrderSpinner() {
         binding.orderList.adapter = object : ArrayAdapter<String>(this, R.layout.simple_list_item_1,
             resources.getStringArray(R.array.main_list_array_order)) {
@@ -257,6 +274,7 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
         }
     }
 
+    // Metodo para configurar el spinner de estado y hacer que el primer elemento sea gris de titulo
     private fun loadStatusSpinner() {
         binding.statusList.adapter = object : ArrayAdapter<String>(this, R.layout.simple_list_item_1,
             resources.getStringArray(R.array.main_list_array_status)) {
@@ -280,22 +298,26 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
         }
     }
 
+    // metodo al destruirse la actividad para cerrar la conexion con el presenter
     @Override
     override fun onDestroy() {
         presenter.detachView()
         super.onDestroy()
     }
 
+    // metodo para aplicar el filtro de estado
     override fun applyFilterOnView(gameList: ArrayList<Game>) {
         listDataAdapter.clear()
         listDataAdapter.addAll(gameList)
         adapter.notifyDataSetChanged()
     }
 
+    // metodo para mostrar error en caso de que no se pueda cargar la lista de juegos
     override fun connectionError() {
         Utils.connectionError(this)
     }
 
+    // metodo para cargar el nuevo orden de la lista de juegos
     override fun applyOrderOnView(gameList: ArrayList<Game>) {
         binding.recyclerView.setHasFixedSize(true)
 
@@ -312,6 +334,7 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
         presenter.applyStatusFilter(binding.statusList.selectedItemPosition, listDataFullAdapter)
     }
 
+    // metodo para mostrar una pantalla de cargando
     private fun showLoadingScreen(visibleLoading: Boolean) {
         if (visibleLoading) {
             binding.progressBar.visibility = View.VISIBLE

@@ -10,6 +10,8 @@ import com.example.audiovisualmanager.model.User
 
 class UserAdapter(private var listData: ArrayList<User>) :
     RecyclerView.Adapter<UserAdapter.ViewHolderData>() {
+
+    // el metodo onCreateViewHolder es el que se ejecuta cuando se crea un nuevo viewholder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderData {
         val layoutInflater = LayoutInflater.from(parent.context)
         val itemListBinding: ItemUserlistScreenAdapterBinding =
@@ -17,6 +19,7 @@ class UserAdapter(private var listData: ArrayList<User>) :
         return ViewHolderData(itemListBinding)
     }
 
+    // el metodo onBindViewHolder es el que se ejecuta cuando se carga un nuevo viewholder y tratamos los datos
     override fun onBindViewHolder(holder: ViewHolderData, position: Int) {
         val user: User = listData[position]
         holder.itemListBinding.tvName.text = user.name
@@ -27,20 +30,26 @@ class UserAdapter(private var listData: ArrayList<User>) :
                     "This is private user",
                     Toast.LENGTH_SHORT
                 ).show()*/
+                // si el usuario tiene el perfil privado no se puede acceder
             } else {
                 val intent = Intent(it.context, MainListActivity::class.java)
                 intent.putExtra("USERID", listData[position].userid)
                 intent.putExtra("ISVIEWER",true)
                 intent.putExtra("VIEWERNAME",listData[position].name)
                 it.context.startActivity(intent)
+                // si el usuario tiene el perfil publico entonces accedemos a su lista de juegos
             }
         }
 
     }
 
+    // el metodo getItemCount es el que se ejecuta cuando se carga el recyclerView
+    // y se cuenta cuantos elementos tiene
     override fun getItemCount(): Int {
         return listData.size
     }
+
+    // cargamos la vista xml
     class ViewHolderData(var itemListBinding: ItemUserlistScreenAdapterBinding) :
         RecyclerView.ViewHolder(itemListBinding.root)
 }

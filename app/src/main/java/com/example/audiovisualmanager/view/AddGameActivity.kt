@@ -33,12 +33,19 @@ class AddGameActivity: AppCompatActivity(), IAddGameActivity {
     private var gameId: Int = 0
     private var presenter: IAddGamePresenter = AddGamePresenter()
     private var imageLoaded = false
+
+    // Método donde se inicia la actividad
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = AddgameActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
         presenter.attachView(this)
 
+        loadViews()
+    }
+
+    // Método que carga las vistas
+    private fun loadViews() {
         if(intent.hasExtra("USERID")) {
             userId=intent.getIntExtra("USERID", 0)
         }
@@ -86,12 +93,14 @@ class AddGameActivity: AppCompatActivity(), IAddGameActivity {
         }
     }
 
+    // Método donde se destruye la actividad y se liberan los recursos
     @Override
     override fun onDestroy() {
         presenter.detachView()
         super.onDestroy()
     }
 
+    // Función que hace el onclick para cargar la url de la imagen
     private fun loadImageSelector() {
         binding.buttonLoadImage.setOnClickListener {
             if (binding.editTextGameImage.text.isEmpty()) {
@@ -129,6 +138,7 @@ class AddGameActivity: AppCompatActivity(), IAddGameActivity {
         }
     }
 
+    // Funcion que añade un juego a la base de datos desde una corrutina en un hilo diferente para no bloquear la interfaz
     private fun addGame() {
         var imageUrl: String? = null
         if (binding.editTextGameImage.text.isNotEmpty() && imageLoaded) {
@@ -151,6 +161,7 @@ class AddGameActivity: AppCompatActivity(), IAddGameActivity {
         }.invokeOnCompletion { showLoadingScreen(false) }
     }
 
+    // Funcion que actualiza un juego en la base de datos desde una corrutina en un hilo diferente para no bloquear la interfaz
     private fun updateGame() {
         var imageUrl: String? = null
         if (binding.editTextGameImage.text.isNotEmpty() && imageLoaded) {
@@ -171,6 +182,7 @@ class AddGameActivity: AppCompatActivity(), IAddGameActivity {
         }.invokeOnCompletion { showLoadingScreen(false) }
     }
 
+    // Funcion que carga el juego que se va a editar en el formulario
     private fun loadEditGame() {
         showLoadingScreen(true)
         lifecycleScope.launch(Dispatchers.Main) {
@@ -180,6 +192,7 @@ class AddGameActivity: AppCompatActivity(), IAddGameActivity {
         }.invokeOnCompletion { showLoadingScreen(false) }
     }
 
+    // Funcion que define en que elemento se situará el spinner
     private fun getIndexSpinner(spinner: Spinner, status: Any): Int {
         for (i in 0 until spinner.count) {
             if (spinner.getItemAtPosition(i).toString() == status) {
@@ -189,6 +202,7 @@ class AddGameActivity: AppCompatActivity(), IAddGameActivity {
         return 0
     }
 
+    // Funcion que carga el spinner de estado y hace que el primer elemento se vea en gris para hacer de titulo
     private fun loadStatusSpinner() {
         binding.spinnerStatus.adapter = object : ArrayAdapter<String>(this, R.layout.simple_list_item_1,
             resources.getStringArray(R.array.add_game_array_status)) {
@@ -212,6 +226,7 @@ class AddGameActivity: AppCompatActivity(), IAddGameActivity {
         }
     }
 
+    // Funcion que carga el spinner de plataforma y hace que el primer elemento se vea en gris para hacer de titulo
     private fun loadPlatformSpinner() {
         binding.spinnerPlatform.adapter = object : ArrayAdapter<String>(this, R.layout.simple_list_item_1,
             resources.getStringArray(R.array.add_game_array_platform)) {
@@ -235,6 +250,7 @@ class AddGameActivity: AppCompatActivity(), IAddGameActivity {
         }
     }
 
+    // Funcion que carga el spinner de valoracion y hace que el primer elemento se vea en gris para hacer de titulo
     private fun loadPointsSpinner() {
         binding.spinnerPoints.adapter = object : ArrayAdapter<String>(this, R.layout.simple_list_item_1,
             resources.getStringArray(R.array.add_game_array_valoration)) {
@@ -258,6 +274,7 @@ class AddGameActivity: AppCompatActivity(), IAddGameActivity {
         }
     }
 
+    // Funcion que muestra o oculta el loading screen
     private fun showLoadingScreen(visibleLoading: Boolean) {
         if (visibleLoading) {
             binding.progressBar.visibility = View.VISIBLE
@@ -268,6 +285,7 @@ class AddGameActivity: AppCompatActivity(), IAddGameActivity {
         }
     }
 
+    // Llamada al presionar el boton de volver atras que ejecuta la activity principal de lista de juegos
     @Override
     override fun onBackPressed() {
         val intent2= Intent (this , MainListActivity::class.java)
@@ -276,10 +294,13 @@ class AddGameActivity: AppCompatActivity(), IAddGameActivity {
         finish()
     }
 
+    // Funcion que muestra un mensaje de error de conexion
     override fun connectionError() {
         Utils.connectionError(this)
     }
 
+    // Funcion que vuelve a cargar la activity de la lista principal cuando el
+    // usuario ha terminado de editar o agregar un juego
     override fun updateOrAddGameSuccess() {
         val intent2= Intent (this , MainListActivity::class.java)
         intent2.putExtra("USERID", userId)
@@ -287,6 +308,7 @@ class AddGameActivity: AppCompatActivity(), IAddGameActivity {
         finish()
     }
 
+    // Funcion que carga un juego en el formulario
     override fun loadGame(game: Game) {
         binding.editTextGameName.setText(game.name)
         binding.spinnerStatus.setSelection(getIndexSpinner(binding.spinnerStatus, game.status))
@@ -295,6 +317,7 @@ class AddGameActivity: AppCompatActivity(), IAddGameActivity {
         binding.editTextGameCompany.setText(game.company)
         binding.editTextGameGenre.setText(game.genre)
         binding.buttonDoRegister.text = getString(R.string.update_game)
+        // Si el juego tiene una imagen, la carga en el imageview
         if (game.image.isNullOrEmpty().not()) {
             binding.editTextGameImage.setText(game.image)
             Glide.with(this).load(game.image).into(binding.imageViewGame)
