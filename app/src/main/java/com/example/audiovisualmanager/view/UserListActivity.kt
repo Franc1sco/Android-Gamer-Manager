@@ -28,24 +28,33 @@ class UserListActivity : AppCompatActivity(), IUserListActivity {
     private lateinit var adapter: UserAdapter
     var userId: Int = 0
     private var presenter: IUserListPresenter = UserListPresenter()
+
+    // metodo que se ejecuta al iniciar la actividad
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = UserlistActivityBinding .inflate(layoutInflater)
         setContentView(binding.root)
         presenter.attachView(this)
 
+        loadViews()
+    }
+
+    // metodo para cargar los datos en la vista
+    private fun loadViews() {
         if(intent.hasExtra("USERID")){
             userId=intent.getIntExtra("USERID", 0)
         }
         setupAdapter()
     }
 
+    // metodo donde se destruye la actividad y se liberan los recursos
     @Override
     override fun onDestroy() {
         presenter.detachView()
         super.onDestroy()
     }
 
+    // metodo para cargar los datos del spinner de estado para filtrar los usuarios
     private fun setupUpStatusSpinner() {
         binding.statusList.adapter =
             ArrayAdapter(this, R.layout.simple_list_item_1, resources.getStringArray(R.array.user_status_array_all))
@@ -74,6 +83,7 @@ class UserListActivity : AppCompatActivity(), IUserListActivity {
         }
     }
 
+    // metodo que se usa para aplicar el filtro de estado
     private fun filterOnly(filter: Int) {
         listDataAdapter.clear()
         if (filter != 0) {
@@ -91,6 +101,7 @@ class UserListActivity : AppCompatActivity(), IUserListActivity {
         adapter.notifyDataSetChanged()
     }
 
+    // metodo para cargar los datos del recycler view de usuarios haciendo llamada a la base de datos desde el presenter
     private fun setupAdapter() {
         showLoadingScreen(true)
         lifecycleScope.launch(Dispatchers.Main) {
@@ -100,6 +111,7 @@ class UserListActivity : AppCompatActivity(), IUserListActivity {
         }.invokeOnCompletion { showLoadingScreen(false) }
     }
 
+    // metodo que se ejecuta cuando carga la lista de usuarios desde la base de datos en el presenter
     override fun loadUserList(userList: ArrayList<User>) {
         binding.recyclerView.layoutManager = LinearLayoutManager(
             this,
@@ -115,6 +127,7 @@ class UserListActivity : AppCompatActivity(), IUserListActivity {
         setupUpStatusSpinner()
     }
 
+    // metodo que se ejecuta cuando se muestra el loading screen
     private fun showLoadingScreen(visibleLoading: Boolean) {
         if (visibleLoading) {
             binding.progressBar.visibility = View.VISIBLE
@@ -127,6 +140,7 @@ class UserListActivity : AppCompatActivity(), IUserListActivity {
         }
     }
 
+    // metodo que se ejecuta cuando se muestra un mensaje de error de conexion
     override fun connectionError() {
         Utils.connectionError(this)
     }

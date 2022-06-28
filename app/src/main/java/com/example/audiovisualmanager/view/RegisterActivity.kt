@@ -21,12 +21,19 @@ import kotlinx.coroutines.withContext
 class RegisterActivity : AppCompatActivity(), IRegisterActivity {
     private lateinit var binding: RegisterActivityBinding
     private var presenter: IRegisterPresenter = RegisterPresenter()
+
+    // metodo que se ejecuta al iniciar la actividad
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = RegisterActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
         presenter.attachView(this)
 
+        loadViews()
+    }
+
+    // metodo que carga las vistas donde sse fija los listeners y los datos de los campos
+    private fun loadViews() {
         binding.buttonDoRegister.setOnClickListener {
             val name = binding.editTextUserRegister.text.toString()
             val pass = binding.editTextPasswordRegister.text.toString()
@@ -51,12 +58,14 @@ class RegisterActivity : AppCompatActivity(), IRegisterActivity {
         }
     }
 
+    // metodo donde se destruye la actividad y se liberan los recursos
     @Override
     override fun onDestroy() {
         presenter.detachView()
         super.onDestroy()
     }
 
+    // metodo que muestra o oculta el loading screen
     private fun showLoadingScreen(visibleLoading: Boolean) {
         if (visibleLoading) {
             binding.progressBar.visibility = View.VISIBLE
@@ -67,14 +76,17 @@ class RegisterActivity : AppCompatActivity(), IRegisterActivity {
         }
     }
 
+    // metodo que muestra el toast de error de conexion
     override fun connectionError() {
         Utils.connectionError(this)
     }
 
+    // metodo que muestra el toast de error de usuario existente
     override fun showUserExists() {
         Toast.makeText(this, getString(R.string.user_already_extis), Toast.LENGTH_SHORT).show()
     }
 
+    // metodo que agrega un usuario a la base de datos
     override fun showUserDoesNotExist() {
         val name = binding.editTextUserRegister.text.toString()
         val pass = binding.editTextPasswordRegister.text.toString()
@@ -86,6 +98,7 @@ class RegisterActivity : AppCompatActivity(), IRegisterActivity {
         }.invokeOnCompletion { showLoadingScreen(false) }
     }
 
+    // metodo que muestra el toast de usuario agregado
     override fun userAddedSuccessfully() {
         Utils.showMessage(this, getString(R.string.user_registered_success))
         finish()
