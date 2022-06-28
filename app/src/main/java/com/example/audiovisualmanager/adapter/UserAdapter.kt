@@ -24,7 +24,7 @@ class UserAdapter(private var listData: ArrayList<User>) :
         val user: User = listData[position]
         holder.itemListBinding.tvName.text = user.name
         holder.itemListBinding.tvName.setOnClickListener {
-            if (listData[position].private == 1) {
+            if (listData[position].isprivate == 1) {
                 /*Toast.makeText(
                     it.context,
                     "This is private user",

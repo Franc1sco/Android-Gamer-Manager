@@ -89,10 +89,10 @@ class UserListActivity : AppCompatActivity(), IUserListActivity {
         if (filter != 0) {
             when (filter) {
                 Constants.ITEM_PUBLIC -> {
-                    listDataAdapter.addAll(listDataFullAdapter.filter { it.private == 0 })
+                    listDataAdapter.addAll(listDataFullAdapter.filter { it.isprivate == 0 })
                 }
                 Constants.ITEM_PRIVATE -> {
-                    listDataAdapter.addAll(listDataFullAdapter.filter { it.private == 1 })
+                    listDataAdapter.addAll(listDataFullAdapter.filter { it.isprivate == 1 })
                 }
             }
         } else {
