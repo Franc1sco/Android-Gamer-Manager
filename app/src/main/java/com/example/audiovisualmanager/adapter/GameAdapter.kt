@@ -27,7 +27,9 @@ class GameAdapter(private var listData: ArrayList<Game>, var context: Context) :
         val game: Game = listData[position]
         holder.itemListBinding.tvName.text = game.name
         holder.itemListBinding.tvStatus.text = game.status
-        holder.itemListBinding.tvPlatform.text = game.platform
+        holder.itemListBinding.tvPlatform.text = "Plataforma: " + game.platform
+        holder.itemListBinding.tvGenre.text = "Género: " + game.genre
+        holder.itemListBinding.tvCompany.text = "Compañía: " + game.company
         if (game.image.isNullOrEmpty().not()) Glide.with(context).load(game.image).into(holder.itemListBinding.ivGameImage)
 
         setupRate(holder, game.valoration)
