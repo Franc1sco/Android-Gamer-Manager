@@ -82,6 +82,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
             android:text="Privacidad:"
             android:textColor="@color/black"
             android:textSize="20sp" />
@@ -94,7 +99,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
-
+            android:textSize="20sp"
             />
 
         <Button
@@ -114,20 +119,34 @@
             />
 
     </LinearLayout>
-    <Button
-        android:id="@+id/buttonUpdatePassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Actualizar"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        android:background="#F44336"
-        />
+        <Button
+            android:id="@+id/buttonUpdateStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Actualizar Privacidad"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:background="#F44336"
+            />
+        <Button
+            android:id="@+id/buttonUpdatePassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Actualizar Contraseña"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:background="#F44336"
+            />
     </LinearLayout>
     <ProgressBar
         android:id="@+id/progressBar"

@@ -364,13 +364,37 @@ class MysqlManager {
     }
 
     // Metodo para actualizar los datos de un usuario
-    fun updateUser(userid: Int, password: String, private : Boolean): Boolean {
+    fun updateUser(userid: Int, password: String): Boolean {
+        var stmt: Statement? = null
+        var noError = true
+        try {
+            stmt = conn?.createStatement()
+            val query = ("UPDATE $TABLE_USER SET $PASSWORD_USER = '$password' WHERE $ID = $userid")
+
+            stmt?.executeQuery(query)
+
+        } catch (ex: SQLException) {
+            noError = false
+            ex.printStackTrace()
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+        }
+        return noError
+    }
+
+    // Metodo para actualizar los datos de privacidad de un usuario
+    fun updateUserStatus(userid: Int, private: Boolean): Boolean {
         var stmt: Statement? = null
         var noError = true
         try {
             stmt = conn?.createStatement()
             val isPrivate = if(private) 1 else 0
-            val query = ("UPDATE $TABLE_USER SET $PASSWORD_USER = '$password', $PRIVATE_USER = $isPrivate WHERE $ID = $userid")
+            val query = ("UPDATE $TABLE_USER SET $PRIVATE_USER = $isPrivate WHERE $ID = $userid")
 
             stmt?.executeQuery(query)
 

@@ -63,14 +63,23 @@ class EditUserActivity: AppCompatActivity(), IEditUserActivity {
                 showLoadingScreen(true)
                 lifecycleScope.launch(Dispatchers.Main) {
                     withContext(Dispatchers.IO) {
-                        presenter.editUser(userId, binding.editPasswordUpdate.text.toString(),
-                            binding.spinnerUpdatePrivate.selectedItemPosition == 1)
+                        presenter.editUser(userId, binding.editPasswordUpdate.text.toString())
                     }
                 }.invokeOnCompletion { showLoadingScreen(false) }
 
             } else {
                 Toast.makeText(this, getString(R.string.password_dont_match), Toast.LENGTH_SHORT).show()
             }
+        }
+
+        binding.buttonUpdateStatus.setOnClickListener {
+            // Se llama al metodo de actualizar privacidad en un hilo diferente al principal con el presenter
+            showLoadingScreen(true)
+            lifecycleScope.launch(Dispatchers.Main) {
+                withContext(Dispatchers.IO) {
+                    presenter.updateUserStatus(userId, binding.spinnerUpdatePrivate.selectedItemPosition == 1)
+                }
+            }.invokeOnCompletion { showLoadingScreen(false) }
         }
 
         binding.cbShowPasswordUpdate.setOnClickListener {
@@ -116,6 +125,15 @@ class EditUserActivity: AppCompatActivity(), IEditUserActivity {
     // metodo que se ejecuta al terminar de actualizar la contraseña y se cierra la actividad volviendo a la actividad anterior
     override fun updateUserSuccess() {
         Toast.makeText(this, getString(R.string.password_updated), Toast.LENGTH_SHORT).show()
+        val intent2= Intent (this , MainListActivity::class.java)
+        intent2.putExtra("USERID", userId)
+        startActivity(intent2)
+        finish()
+    }
+
+    // metodo que se ejecuta al terminar de actualizar la privacidad y se cierra la actividad volviendo a la actividad anterior
+    override fun updateUserStatusSuccess() {
+        Toast.makeText(this, getString(R.string.status_updated), Toast.LENGTH_SHORT).show()
         val intent2= Intent (this , MainListActivity::class.java)
         intent2.putExtra("USERID", userId)
         startActivity(intent2)

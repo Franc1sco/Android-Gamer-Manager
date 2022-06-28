@@ -346,4 +346,12 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
             binding.clSubTitle.visibility = View.VISIBLE
         }
     }
+
+    // Llamada al presionar el boton de volver atras que ejecuta la activity principal
+    @Override
+    override fun onBackPressed() {
+        val intent2= Intent (this , MainActivity::class.java)
+        startActivity(intent2)
+        finish()
+    }
 }

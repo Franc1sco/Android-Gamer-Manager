@@ -1,5 +1,6 @@
 package com.example.audiovisualmanager.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
 import android.view.View
@@ -101,6 +102,16 @@ class RegisterActivity : AppCompatActivity(), IRegisterActivity {
     // metodo que muestra el toast de usuario agregado
     override fun userAddedSuccessfully() {
         Utils.showMessage(this, getString(R.string.user_registered_success))
+        val intent2= Intent (this , MainActivity::class.java)
+        startActivity(intent2)
+        finish()
+    }
+
+    // Llamada al presionar el boton de volver atras que ejecuta la activity principal
+    @Override
+    override fun onBackPressed() {
+        val intent2= Intent (this , MainActivity::class.java)
+        startActivity(intent2)
         finish()
     }
 }

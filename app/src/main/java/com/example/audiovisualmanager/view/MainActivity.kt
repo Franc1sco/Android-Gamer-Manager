@@ -79,6 +79,7 @@ class MainActivity : AppCompatActivity(), IMainActivity {
         binding.buttonRegister.setOnClickListener {
             // abre la actividad de registro
             startActivity(Intent(this, RegisterActivity::class.java))
+            finish()
         }
 
         binding.cbShowPassword.setOnClickListener {
@@ -125,6 +126,7 @@ class MainActivity : AppCompatActivity(), IMainActivity {
         val intent = Intent(this, MainListActivity::class.java)
         intent.putExtra("USERID", userId)
         startActivity(intent)
+        finish()
     }
 
     // Metodo que muestra una pantalla de carga mientras se ejecuta una operacion
