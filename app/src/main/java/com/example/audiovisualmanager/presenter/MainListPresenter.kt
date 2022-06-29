@@ -103,4 +103,28 @@ class MainListPresenter : IMainListPresenter {
     override suspend fun removeGame(gameId: Int) {
         dbHandler.deleteGame(gameId)
     }
+
+    override suspend fun unfollowBy(userId: Int, viewerId: Int) {
+        val noError = dbHandler.unfollowBy(userId, viewerId)
+        withContext(Dispatchers.Main) {
+            if (noError.not()) {
+                view?.connectionError()
+                return@withContext
+            }
+            // se muestra la lista de juegos ordenada
+            view?.followStatusChanged(false)
+        }
+    }
+
+    override suspend fun followBy(userId: Int, viewerId: Int) {
+        val noError = dbHandler.followBy(userId, viewerId)
+        withContext(Dispatchers.Main) {
+            if (noError.not()) {
+                view?.connectionError()
+                return@withContext
+            }
+            // se muestra la lista de juegos ordenada
+            view?.followStatusChanged(true)
+        }
+    }
 }

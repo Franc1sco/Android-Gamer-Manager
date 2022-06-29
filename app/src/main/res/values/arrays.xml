@@ -6,8 +6,8 @@
     </string-array>
     <string-array name="user_status_array_all">
         <item>Todos</item>
-        <item>Público</item>
-        <item>Privado</item>
+        <item>Seguidores</item>
+        <item>Seguidos</item>
     </string-array>
     <string-array name="add_game_array_valoration">
         <item>Valoración</item>

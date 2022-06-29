@@ -16,6 +16,7 @@ class MysqlManager {
         private const val TABLE_USER = "UserTable"
         private const val TABLE_USERGAMES = "UserGames"
         private const val TABLE_GAMES = "Games"
+        private const val TABLE_FOLLOWERS = "Followers"
 
         //Declaramos los valores de las columnas
         //TABLA UserTable
@@ -38,6 +39,9 @@ class MysqlManager {
         private const val GAME_USERID = "userid"
         private const val GAME_IMAGE = "image"
 
+        // Tabla seguidores
+        private const val FOLLOWER_ID = "userid"
+        private const val FOLLOWED_BY_ID = "followedbyid"
 
     }
 
@@ -112,6 +116,11 @@ class MysqlManager {
                     + GAME_COMPANY + " varchar(64) NOT NULL,"
                     + GAMEVALIDATED + " INT NOT NULL DEFAULT 0,"
                     + GAME_IMAGE + " varchar(255)" + ")")
+            stmt?.executeQuery(query)
+
+            query = ("CREATE TABLE IF NOT EXISTS " + TABLE_FOLLOWERS + "("
+                    + FOLLOWER_ID + " INT NOT NULL,"
+                    + FOLLOWED_BY_ID + " INT NOT NULL" + ")")
             stmt?.executeQuery(query)
 
         } catch (ex: SQLException) {
@@ -515,7 +524,7 @@ class MysqlManager {
         return noError
     }
 
-    // Metodo para obtener la lista de usuarios
+    // Metodo para obtener la lista de usuarios con perfil público
     fun getUserList(exception: Int): ArrayList<User>? {
         var stmt: Statement? = null
         var resultSet: ResultSet? = null
@@ -523,7 +532,7 @@ class MysqlManager {
         try {
             stmt = conn?.createStatement()
             val query = ("SELECT * FROM $TABLE_USER" +
-                    " WHERE $ID != $exception")
+                    " WHERE $ID != $exception AND $PRIVATE_USER = 0")
             resultSet = stmt?.executeQuery(query)
 
             users = ArrayList<User>()
@@ -531,8 +540,9 @@ class MysqlManager {
                 users.add(User(
                     resultSet.getString(NICK_USER),
                     resultSet.getString(PASSWORD_USER),
-                    resultSet.getInt(PRIVATE_USER),
-                    resultSet.getInt(ID)
+                    resultSet.getInt(ID),
+                    checkFollowed(exception, resultSet.getInt(ID)), // este user es seguidor tuyo
+                    checkFollowed(resultSet.getInt(ID), exception) // sigues a este user
                 ))
             }
 
@@ -553,6 +563,82 @@ class MysqlManager {
             }
         }
         return users
+    }
+
+    // Metodo para comprobar si un usuario sigue a otro
+    private fun checkFollowed(userid: Int, followedbyid: Int): Boolean {
+        var stmt: Statement? = null
+        var resultSet: ResultSet? = null
+        try {
+            stmt = conn?.createStatement()
+            val query = ("SELECT * FROM $TABLE_FOLLOWERS WHERE $FOLLOWER_ID = $userid AND $FOLLOWED_BY_ID = $followedbyid")
+            resultSet = stmt?.executeQuery(query)
+
+            if (resultSet?.next() == true) {
+                return true
+            }
+
+        } catch (ex: SQLException) {
+            ex.printStackTrace()
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+            if (resultSet != null) {
+                try {
+                    resultSet.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+        }
+        return false
+    }
+
+    fun unfollowBy(userId: Int, viewerId: Int): Boolean {
+        var stmt: Statement? = null
+        var noError = true
+        try {
+            stmt = conn?.createStatement()
+            val query = ("DELETE FROM $TABLE_FOLLOWERS WHERE $FOLLOWER_ID = $userId AND $FOLLOWED_BY_ID = $viewerId")
+            stmt?.executeQuery(query)
+
+        } catch (ex: SQLException) {
+            noError = false
+            ex.printStackTrace()
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+        }
+        return noError
+    }
+
+    fun followBy(userId: Int, viewerId: Int): Boolean {
+        var stmt: Statement? = null
+        var noError = true
+        try {
+            stmt = conn?.createStatement()
+            val query = ("INSERT INTO $TABLE_FOLLOWERS ($FOLLOWER_ID, $FOLLOWED_BY_ID) VALUES ($userId, $viewerId)")
+            stmt?.executeQuery(query)
+
+        } catch (ex: SQLException) {
+            noError = false
+            ex.printStackTrace()
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close()
+                } catch (sqlEx: SQLException) {
+                }
+            }
+        }
+        return noError
     }
 
 }

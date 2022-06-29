@@ -70,11 +70,11 @@ class UserListActivity : AppCompatActivity(), IUserListActivity {
                     0 -> {
                         filterOnly(0)
                     }
-                    Constants.ITEM_PUBLIC -> {
-                        filterOnly(Constants.ITEM_PUBLIC)
+                    Constants.ITEM_FOLLOWERS -> {
+                        filterOnly(Constants.ITEM_FOLLOWERS)
                     }
-                    Constants.ITEM_PRIVATE -> {
-                        filterOnly(Constants.ITEM_PRIVATE)
+                    Constants.ITEM_FOLLOWING -> {
+                        filterOnly(Constants.ITEM_FOLLOWING)
                     }
                 }
             }
@@ -88,11 +88,11 @@ class UserListActivity : AppCompatActivity(), IUserListActivity {
         listDataAdapter.clear()
         if (filter != 0) {
             when (filter) {
-                Constants.ITEM_PUBLIC -> {
-                    listDataAdapter.addAll(listDataFullAdapter.filter { it.isprivate == 0 })
+                Constants.ITEM_FOLLOWERS -> {
+                    listDataAdapter.addAll(listDataFullAdapter.filter { it.follower == true })
                 }
-                Constants.ITEM_PRIVATE -> {
-                    listDataAdapter.addAll(listDataFullAdapter.filter { it.isprivate == 1 })
+                Constants.ITEM_FOLLOWING -> {
+                    listDataAdapter.addAll(listDataFullAdapter.filter { it.following == true })
                 }
             }
         } else {
@@ -122,7 +122,7 @@ class UserListActivity : AppCompatActivity(), IUserListActivity {
         listDataFullAdapter = ArrayList<User>()
         listDataFullAdapter.addAll(userList)
         listDataAdapter.addAll(listDataFullAdapter)
-        adapter = UserAdapter(listDataAdapter)
+        adapter = UserAdapter(listDataAdapter, userId)
         binding.recyclerView.adapter = adapter
         setupUpStatusSpinner()
     }

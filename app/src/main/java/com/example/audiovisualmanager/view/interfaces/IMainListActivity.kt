@@ -6,4 +6,5 @@ interface IMainListActivity {
     fun applyFilterOnView(gameList: ArrayList<Game>)
     fun connectionError()
     fun applyOrderOnView(gameList: ArrayList<Game>)
+    fun followStatusChanged(isFollowed: Boolean)
 }

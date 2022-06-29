@@ -24,4 +24,10 @@
     <string name="select_genre">Please enter a Genre name</string>
     <string name="invalid_user_pass">Usuario o contraseña incorrectos</string>
     <string name="user_list">Lista de Usuarios</string>
+    <string name="unfollow">No seguir</string>
+    <string name="follow">Seguir</string>
+    <string name="follow_status_followed">Ahora sigues al usuario</string>
+    <string name="follow_status_unfollowed">Ya no sigues al usuario</string>
+    <string name="is_your_follower">Te sigue</string>
+    <string name="you_are_follow">Le sigues</string>
 </resources>

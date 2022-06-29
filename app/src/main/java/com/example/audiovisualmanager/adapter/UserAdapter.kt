@@ -8,7 +8,7 @@ import com.example.audiovisualmanager.view.MainListActivity
 import com.example.audiovisualmanager.databinding.ItemUserlistScreenAdapterBinding
 import com.example.audiovisualmanager.model.User
 
-class UserAdapter(private var listData: ArrayList<User>) :
+class UserAdapter(private var listData: ArrayList<User>, private val userId: Int) :
     RecyclerView.Adapter<UserAdapter.ViewHolderData>() {
 
     // el metodo onCreateViewHolder es el que se ejecuta cuando se crea un nuevo viewholder
@@ -23,24 +23,17 @@ class UserAdapter(private var listData: ArrayList<User>) :
     override fun onBindViewHolder(holder: ViewHolderData, position: Int) {
         val user: User = listData[position]
         holder.itemListBinding.tvName.text = user.name
+        holder.itemListBinding.tvFollower.visibility = if(user.follower == true) ViewGroup.VISIBLE else ViewGroup.GONE
+        holder.itemListBinding.tvFollowed.visibility = if(user.following == true) ViewGroup.VISIBLE else ViewGroup.GONE
         holder.itemListBinding.tvName.setOnClickListener {
-            if (listData[position].isprivate == 1) {
-                /*Toast.makeText(
-                    it.context,
-                    "This is private user",
-                    Toast.LENGTH_SHORT
-                ).show()*/
-                // si el usuario tiene el perfil privado no se puede acceder
-            } else {
-                val intent = Intent(it.context, MainListActivity::class.java)
-                intent.putExtra("USERID", listData[position].userid)
-                intent.putExtra("ISVIEWER",true)
-                intent.putExtra("VIEWERNAME",listData[position].name)
-                it.context.startActivity(intent)
-                // si el usuario tiene el perfil publico entonces accedemos a su lista de juegos
-            }
+            val intent = Intent(it.context, MainListActivity::class.java)
+            intent.putExtra("USERID", listData[position].userid)
+            intent.putExtra("ISVIEWER",true)
+            intent.putExtra("VIEWERNAME",listData[position].name)
+            intent.putExtra("VIEWERID", userId)
+            intent.putExtra("ISFOLLOWED", listData[position].following)
+            it.context.startActivity(intent)
         }
-
     }
 
     // el metodo getItemCount es el que se ejecuta cuando se carga el recyclerView

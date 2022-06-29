@@ -38,8 +38,10 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
     private lateinit var listDataFullAdapter: ArrayList<Game>
     private lateinit var adapter: GameAdapter
     private var userId: Int = 0
+    private var viewerId: Int = 0
     private var isViewer: Boolean = false
     private var viewerName = ""
+    private var isFollowed: Boolean = false
     private var presenter: IMainListPresenter = MainListPresenter()
 
     // Metodo que se ejecuta al iniciar la actividad
@@ -64,6 +66,12 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
         if(intent.hasExtra("VIEWERNAME")){
             viewerName=intent.getStringExtra("VIEWERNAME") ?: ""
         }
+        if(intent.hasExtra("ISFOLLOWED")){
+            isFollowed=intent.getBooleanExtra("ISFOLLOWED", false)
+        }
+        if(intent.hasExtra("VIEWERID")){
+            viewerId=intent.getIntExtra("VIEWERID", 0)
+        }
 
         // Oculta los botones de agregar y configurar si es un usuario que esta viendo la lista
         if (isViewer) {
@@ -72,11 +80,34 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
             binding.UserConfig.visibility = View.INVISIBLE
             binding.UserConfig.isEnabled = false
             binding.tvTitle.text = getString(R.string.viewto, viewerName)
+            setupFollow(this.isFollowed)
         }
         loadStatusSpinner()
         loadOrderSpinner()
         setupAdapter()
         setupAscListener()
+    }
+
+    private fun setupFollow(isFollowed: Boolean) {
+        binding.btnFollow.visibility = View.VISIBLE
+
+        // set image based on isFollowed
+        binding.btnFollow.setImageResource(if (isFollowed) R.drawable.ic_baseline_person_remove_64 else R.drawable.ic_baseline_person_add_64)
+        binding.btnFollow.setOnClickListener {
+            if (isFollowed) {
+                lifecycleScope.launch(Dispatchers.Main) {
+                    withContext(Dispatchers.IO) {
+                        presenter.unfollowBy(userId, viewerId)
+                    }
+                }.invokeOnCompletion { showLoadingScreen(false) }
+            } else {
+                lifecycleScope.launch(Dispatchers.Main) {
+                    withContext(Dispatchers.IO) {
+                        presenter.followBy(userId, viewerId)
+                    }
+                }.invokeOnCompletion { showLoadingScreen(false) }
+            }
+        }
     }
 
     // Metodo que carga el listener de la flecha de ordenamiento
@@ -334,6 +365,11 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
         presenter.applyStatusFilter(binding.statusList.selectedItemPosition, listDataFullAdapter)
     }
 
+    override fun followStatusChanged(isFollowed: Boolean) {
+        Utils.showMessage(this, getString(if (isFollowed) R.string.follow_status_followed else R.string.follow_status_unfollowed))
+        setupFollow(isFollowed)
+    }
+
     // metodo para mostrar una pantalla de cargando
     private fun showLoadingScreen(visibleLoading: Boolean) {
         if (visibleLoading) {
@@ -347,11 +383,17 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
         }
     }
 
-    // Llamada al presionar el boton de volver atras que ejecuta la activity principal
+    // Llamada al presionar el boton de volver atras que ejecuta la activity principal o a la actividad de lista de usuarios
     @Override
     override fun onBackPressed() {
-        val intent2= Intent (this , MainActivity::class.java)
-        startActivity(intent2)
+        if (!isViewer) {
+            val intent2 = Intent(this, MainActivity::class.java)
+            startActivity(intent2)
+        } else {
+            val intent2= Intent (this , UserListActivity::class.java)
+            intent2.putExtra("USERID", viewerId)
+            startActivity(intent2)
+        }
         finish()
     }
 }
