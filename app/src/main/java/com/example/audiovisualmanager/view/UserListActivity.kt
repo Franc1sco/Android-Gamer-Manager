@@ -23,9 +23,9 @@ import java.util.ArrayList
 
 class UserListActivity : AppCompatActivity(), IUserListActivity {
     private lateinit var binding: UserlistActivityBinding
-    private lateinit var listDataAdapter: ArrayList<User>
-    private lateinit var listDataFullAdapter: ArrayList<User>
-    private lateinit var adapter: UserAdapter
+    private var listDataAdapter = ArrayList<User>()
+    private var listDataFullAdapter = ArrayList<User>()
+    private var adapter: UserAdapter? = null
     var userId: Int = 0
     private var presenter: IUserListPresenter = UserListPresenter()
 
@@ -98,7 +98,7 @@ class UserListActivity : AppCompatActivity(), IUserListActivity {
         } else {
             listDataAdapter.addAll(listDataFullAdapter)
         }
-        adapter.notifyDataSetChanged()
+        adapter?.notifyDataSetChanged()
     }
 
     // metodo para cargar los datos del recycler view de usuarios haciendo llamada a la base de datos desde el presenter
@@ -118,11 +118,9 @@ class UserListActivity : AppCompatActivity(), IUserListActivity {
             LinearLayoutManager.VERTICAL, false
         )
         binding.recyclerView.setHasFixedSize(true)
-        listDataAdapter = ArrayList<User>()
-        listDataFullAdapter = ArrayList<User>()
         listDataFullAdapter.addAll(userList)
         listDataAdapter.addAll(listDataFullAdapter)
-        adapter = UserAdapter(listDataAdapter, userId)
+        adapter = UserAdapter(listDataAdapter, this@UserListActivity, userId)
         binding.recyclerView.adapter = adapter
         setupUpStatusSpinner()
     }
@@ -142,6 +140,10 @@ class UserListActivity : AppCompatActivity(), IUserListActivity {
 
     // metodo que se ejecuta cuando se muestra un mensaje de error de conexion
     override fun connectionError() {
-        Utils.connectionError(this)
+        lifecycleScope.launch(Dispatchers.Main) {
+            withContext(Dispatchers.IO) {
+                Utils.connectionError(this@UserListActivity)
+            }
+        }.invokeOnCompletion { showLoadingScreen(false) }
     }
 }

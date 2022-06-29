@@ -79,7 +79,11 @@ class RegisterActivity : AppCompatActivity(), IRegisterActivity {
 
     // metodo que muestra el toast de error de conexion
     override fun connectionError() {
-        Utils.connectionError(this)
+        lifecycleScope.launch(Dispatchers.Main) {
+            withContext(Dispatchers.IO) {
+                Utils.connectionError(this@RegisterActivity)
+            }
+        }.invokeOnCompletion { showLoadingScreen(false) }
     }
 
     // metodo que muestra el toast de error de usuario existente

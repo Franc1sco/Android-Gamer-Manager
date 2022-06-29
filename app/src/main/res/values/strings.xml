@@ -30,4 +30,5 @@
     <string name="follow_status_unfollowed">Ya no sigues al usuario</string>
     <string name="is_your_follower">Te sigue</string>
     <string name="you_are_follow">Le sigues</string>
+    <string name="connection_reconnect">Conexión reestablecida</string>
 </resources>

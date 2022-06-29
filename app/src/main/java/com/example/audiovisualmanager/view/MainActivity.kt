@@ -101,7 +101,11 @@ class MainActivity : AppCompatActivity(), IMainActivity {
 
     // Metodo que muestra error de conexion a la base de datos
     override fun connectionError() {
-        Utils.connectionError(this)
+        lifecycleScope.launch(Dispatchers.Main) {
+            withContext(Dispatchers.IO) {
+                Utils.connectionError(this@MainActivity)
+            }
+        }.invokeOnCompletion { showLoadingScreen(false) }
     }
 
     // Metodo que guarda la sesion en el dispositivo si el usuario lo ha marcado

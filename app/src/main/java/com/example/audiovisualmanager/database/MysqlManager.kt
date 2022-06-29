@@ -155,11 +155,11 @@ class MysqlManager {
             val query = ("SELECT $NICK_USER FROM $TABLE_USER WHERE $NICK_USER = '$username' AND $PASSWORD_USER = '$password'")
             queryResults = stmt?.executeQuery(query)
 
-            isValid = queryResults?.next() == true // si hay resultados, isValid es true
+            isValid = queryResults?.next() // si hay resultados, isValid es true
 
         } catch (ex: SQLException) {
             // si hay error, lo guardamos en la variable isValid
-            isValid = false
+            isValid = null
             ex.printStackTrace()
         } finally {
             // al finalizar sin error, cerramos la conexion
@@ -639,6 +639,15 @@ class MysqlManager {
             }
         }
         return noError
+    }
+
+    fun tryReconnect(): Boolean {
+        if (conn == null || conn?.isClosed == true) {
+            for (i in 0..5) {
+                if (getConnection()) return true
+            }
+        }
+        return false
     }
 
 }

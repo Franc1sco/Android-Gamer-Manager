@@ -34,9 +34,9 @@ import kotlin.collections.ArrayList
 
 class MainListActivity : AppCompatActivity(), IMainListActivity {
     private lateinit var binding: ActivityMainlistBinding
-    private lateinit var listDataAdapter: ArrayList<Game>
-    private lateinit var listDataFullAdapter: ArrayList<Game>
-    private lateinit var adapter: GameAdapter
+    private var listDataAdapter = ArrayList<Game>()
+    private var listDataFullAdapter = ArrayList<Game>()
+    private var adapter: GameAdapter? = null
     private var userId: Int = 0
     private var viewerId: Int = 0
     private var isViewer: Boolean = false
@@ -340,22 +340,22 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
     override fun applyFilterOnView(gameList: ArrayList<Game>) {
         listDataAdapter.clear()
         listDataAdapter.addAll(gameList)
-        adapter.notifyDataSetChanged()
+        adapter?.notifyDataSetChanged()
     }
 
     // metodo para mostrar error en caso de que no se pueda cargar la lista de juegos
     override fun connectionError() {
-        Utils.connectionError(this)
+        lifecycleScope.launch(Dispatchers.Main) {
+            withContext(Dispatchers.IO) {
+                Utils.connectionError(this@MainListActivity)
+            }
+        }.invokeOnCompletion { showLoadingScreen(false) }
     }
 
     // metodo para cargar el nuevo orden de la lista de juegos
     override fun applyOrderOnView(gameList: ArrayList<Game>) {
         binding.recyclerView.setHasFixedSize(true)
 
-        listDataAdapter = gameList
-        listDataFullAdapter = gameList
-        listDataAdapter = ArrayList()
-        listDataFullAdapter = ArrayList()
         listDataFullAdapter.addAll(gameList)
         listDataAdapter.addAll(listDataFullAdapter)
 

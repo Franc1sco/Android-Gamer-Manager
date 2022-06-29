@@ -296,7 +296,11 @@ class AddGameActivity: AppCompatActivity(), IAddGameActivity {
 
     // Funcion que muestra un mensaje de error de conexion
     override fun connectionError() {
-        Utils.connectionError(this)
+        lifecycleScope.launch(Dispatchers.Main) {
+            withContext(Dispatchers.IO) {
+                Utils.connectionError(this@AddGameActivity)
+            }
+        }.invokeOnCompletion { showLoadingScreen(false) }
     }
 
     // Funcion que vuelve a cargar la activity de la lista principal cuando el

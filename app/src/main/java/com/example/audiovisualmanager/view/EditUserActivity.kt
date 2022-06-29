@@ -119,7 +119,11 @@ class EditUserActivity: AppCompatActivity(), IEditUserActivity {
 
     // Metodo que muestra error de conexion
     override fun connectionError() {
-        Utils.connectionError(this)
+        lifecycleScope.launch(Dispatchers.Main) {
+            withContext(Dispatchers.IO) {
+                Utils.connectionError(this@EditUserActivity)
+            }
+        }.invokeOnCompletion { showLoadingScreen(false) }
     }
 
     // metodo que se ejecuta al terminar de actualizar la contraseña y se cierra la actividad volviendo a la actividad anterior
