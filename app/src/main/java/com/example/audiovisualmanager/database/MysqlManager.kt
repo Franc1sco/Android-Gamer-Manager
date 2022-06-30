@@ -1,5 +1,26 @@
 package com.example.audiovisualmanager.database
 
+import com.example.audiovisualmanager.database.DatabaseConstants.DATABASE_NAME
+import com.example.audiovisualmanager.database.DatabaseConstants.FOLLOWED_BY_ID
+import com.example.audiovisualmanager.database.DatabaseConstants.FOLLOWER_ID
+import com.example.audiovisualmanager.database.DatabaseConstants.GAMEID
+import com.example.audiovisualmanager.database.DatabaseConstants.GAMEVALIDATED
+import com.example.audiovisualmanager.database.DatabaseConstants.GAME_COMPANY
+import com.example.audiovisualmanager.database.DatabaseConstants.GAME_GENRE
+import com.example.audiovisualmanager.database.DatabaseConstants.GAME_IMAGE
+import com.example.audiovisualmanager.database.DatabaseConstants.GAME_NAME
+import com.example.audiovisualmanager.database.DatabaseConstants.GAME_PLATFORM
+import com.example.audiovisualmanager.database.DatabaseConstants.GAME_POINTS
+import com.example.audiovisualmanager.database.DatabaseConstants.GAME_STATUS
+import com.example.audiovisualmanager.database.DatabaseConstants.GAME_USERID
+import com.example.audiovisualmanager.database.DatabaseConstants.ID
+import com.example.audiovisualmanager.database.DatabaseConstants.NICK_USER
+import com.example.audiovisualmanager.database.DatabaseConstants.PASSWORD_USER
+import com.example.audiovisualmanager.database.DatabaseConstants.PRIVATE_USER
+import com.example.audiovisualmanager.database.DatabaseConstants.TABLE_FOLLOWERS
+import com.example.audiovisualmanager.database.DatabaseConstants.TABLE_GAMES
+import com.example.audiovisualmanager.database.DatabaseConstants.TABLE_USER
+import com.example.audiovisualmanager.database.DatabaseConstants.TABLE_USERGAMES
 import com.example.audiovisualmanager.model.User
 import java.sql.*
 import java.util.*
@@ -9,40 +30,6 @@ import com.example.audiovisualmanager.model.Game
 class MysqlManager {
     companion object {
         val instance = MysqlManager()
-        //Declaramos el nombre de la base de datos
-        private const val DATABASE_NAME = "AudiovisualManagerDatabase"
-
-        //Declaramos los nombre de las tablas
-        private const val TABLE_USER = "UserTable"
-        private const val TABLE_USERGAMES = "UserGames"
-        private const val TABLE_GAMES = "Games"
-        private const val TABLE_FOLLOWERS = "Followers"
-
-        //Declaramos los valores de las columnas
-        //TABLA UserTable
-        private const val ID = "id"
-        private const val NICK_USER = "nick"
-        private const val PASSWORD_USER = "password"
-        private const val PRIVATE_USER = "private"
-
-        //TABLA UserGames intermediaria
-        private const val GAMEID = "gameid"
-        private const val GAMEVALIDATED = "validated"
-
-        //TABLA GAMES
-        private const val GAME_NAME = "name"
-        private const val GAME_PLATFORM = "platform"
-        private const val GAME_GENRE = "genre"
-        private const val GAME_COMPANY = "company"
-        private const val GAME_POINTS = "valoration"
-        private const val GAME_STATUS = "status"
-        private const val GAME_USERID = "userid"
-        private const val GAME_IMAGE = "image"
-
-        // Tabla seguidores
-        private const val FOLLOWER_ID = "userid"
-        private const val FOLLOWED_BY_ID = "followedbyid"
-
     }
 
     //Declaramos un singleton para no tener que hacer varias instancias
@@ -152,7 +139,8 @@ class MysqlManager {
         try {
             // intentamos ejecutar la consulta
             stmt = conn?.createStatement()
-            val query = ("SELECT $NICK_USER FROM $TABLE_USER WHERE $NICK_USER = '$username' AND $PASSWORD_USER = '$password'")
+            val query = ("SELECT $NICK_USER FROM $TABLE_USER " +
+                    "WHERE $NICK_USER = '$username' AND $PASSWORD_USER = '$password'")
             queryResults = stmt?.executeQuery(query)
 
             isValid = queryResults?.next() // si hay resultados, isValid es true
@@ -186,7 +174,8 @@ class MysqlManager {
         var noError = true
         try {
             stmt = conn?.createStatement()
-            val query = ("INSERT INTO $TABLE_USER ($NICK_USER, $PASSWORD_USER) VALUES ('${user.name}', '${user.password}')")
+            val query = ("INSERT INTO $TABLE_USER ($NICK_USER, $PASSWORD_USER)" +
+                    " VALUES ('${user.name}', '${user.password}')")
             stmt?.executeQuery(query)
 
         } catch (ex: SQLException) {

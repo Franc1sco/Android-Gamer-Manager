@@ -18,12 +18,12 @@ abstract class SwipeToEdit(context: Context) : ItemTouchHelper.SimpleCallback(0,
     private val backgroundColor = Color.parseColor("#24AE05")
     private val clearPaint = Paint().apply { xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR) }
 
-    // Llamada cuando el usuario arrastra una vista hacia la izquierda o derecha.
+    // Metodo que se ejecuta cuando se arrastra el item
     override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
         return false
     }
 
-    //Sobreescribiendo este método mostramos un fondo verde con el icono de editar
+    // Llamada cuando el usuario finaliza de arrastrar una vista hacia la izquierda o derecha.
     override fun onChildDraw(
             c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
             dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean
