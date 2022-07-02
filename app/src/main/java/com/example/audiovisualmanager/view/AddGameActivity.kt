@@ -48,7 +48,7 @@ class AddGameActivity: AppCompatActivity(), IAddGameActivity {
 
     // Método que carga las vistas
     private fun loadViews() {
-        Utils.disallowDarkMode(this)
+        Utils.disallowDarkMode()
 
         if(intent.hasExtra("USERID")) {
             userId=intent.getIntExtra("USERID", 0)
@@ -79,6 +79,9 @@ class AddGameActivity: AppCompatActivity(), IAddGameActivity {
                 }
                 binding.editTextGameGenre.text.isEmpty() -> {
                     Utils.showMessage(this, getString(R.string.select_genre))
+                }
+                binding.spinnerPoints.selectedItemPosition <= 0 -> {
+                    Utils.showMessage(this, getString(R.string.select_points))
                 }
                 else -> {
                     if (gameId > 0) {

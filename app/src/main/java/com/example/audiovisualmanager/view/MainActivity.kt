@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity(), IMainActivity {
 
     // metodo que carga los views
     private fun loadViews() {
-        Utils.disallowDarkMode(this)
+        Utils.disallowDarkMode()
         getSavedSession()
         getDatabaseConnection()
         setupListeners()

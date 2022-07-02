@@ -37,7 +37,7 @@ class RegisterActivity : AppCompatActivity(), IRegisterActivity {
 
     // metodo que carga las vistas donde sse fija los listeners y los datos de los campos
     private fun loadViews() {
-        Utils.disallowDarkMode(this)
+        Utils.disallowDarkMode()
 
         binding.buttonDoRegister.setOnClickListener {
             val name = binding.editTextUserRegister.text.toString()

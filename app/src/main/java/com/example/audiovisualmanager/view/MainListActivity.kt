@@ -58,7 +58,7 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
 
     // Metodo que carga las vistas
     private fun loadViews() {
-        Utils.disallowDarkMode(this)
+        Utils.disallowDarkMode()
 
         if(intent.hasExtra("USERID")){
             userId=intent.getIntExtra("USERID", 0)

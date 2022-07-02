@@ -45,7 +45,7 @@ class EditUserActivity: AppCompatActivity(), IEditUserActivity {
 
     // Método que carga las vistas de la actividad
     private fun loadViews() {
-        Utils.disallowDarkMode(this)
+        Utils.disallowDarkMode()
         setupPrivateSpinner()
         if(intent.hasExtra("USERID")){
             userId=intent.getIntExtra("USERID", 0)

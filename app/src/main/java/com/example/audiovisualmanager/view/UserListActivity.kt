@@ -43,7 +43,7 @@ class UserListActivity : AppCompatActivity(), IUserListActivity {
 
     // metodo para cargar los datos en la vista
     private fun loadViews() {
-        Utils.disallowDarkMode(this)
+        Utils.disallowDarkMode()
 
         if(intent.hasExtra("USERID")){
             userId=intent.getIntExtra("USERID", 0)

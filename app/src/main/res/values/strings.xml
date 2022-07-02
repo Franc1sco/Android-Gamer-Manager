@@ -15,13 +15,13 @@
     <string name="password_updated">Contraseña Actualizada</string>
     <string name="status_updated">Privacidad Actualizada</string>
     <string name="password_dont_match">Las contraseñas no coinciden</string>
-    <string name="fill_all_fields">Please fill all the fields</string>
-    <string name="user_already_extis">User already exists</string>
-    <string name="user_registered_success">User registered successfully</string>
-    <string name="status_select">Please select a status</string>
-    <string name="select_platform">Please select a platform</string>
-    <string name="select_company">Please enter a Company name</string>
-    <string name="select_genre">Please enter a Genre name</string>
+    <string name="fill_all_fields">Por favor rellena todos los campos</string>
+    <string name="user_already_extis">El usuario ya existe</string>
+    <string name="user_registered_success">Usuario registrado correctamente</string>
+    <string name="status_select">Por favor selecciona un estado</string>
+    <string name="select_platform">Por favor selecciona una plataforma</string>
+    <string name="select_company">Por favor escribe el nombre de la compañia</string>
+    <string name="select_genre">Por favor escribe un género</string>
     <string name="invalid_user_pass">Usuario o contraseña incorrectos</string>
     <string name="user_list">Lista de Usuarios</string>
     <string name="unfollow">No seguir</string>
@@ -31,4 +31,5 @@
     <string name="is_your_follower">Te sigue</string>
     <string name="you_are_follow">Le sigues</string>
     <string name="connection_reconnect">Conexión reestablecida</string>
+    <string name="select_points">Por favor selecciona una valoración</string>
 </resources>
