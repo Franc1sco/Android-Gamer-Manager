@@ -3,6 +3,7 @@ package com.example.audiovisualmanager.view
 import com.example.audiovisualmanager.R
 import android.os.Bundle
 import android.view.View
+import android.view.Window
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
@@ -32,6 +33,7 @@ class UserListActivity : AppCompatActivity(), IUserListActivity {
     // metodo que se ejecuta al iniciar la actividad
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
         binding = UserlistActivityBinding .inflate(layoutInflater)
         setContentView(binding.root)
         presenter.attachView(this)
@@ -41,6 +43,8 @@ class UserListActivity : AppCompatActivity(), IUserListActivity {
 
     // metodo para cargar los datos en la vista
     private fun loadViews() {
+        Utils.disallowDarkMode(this)
+
         if(intent.hasExtra("USERID")){
             userId=intent.getIntExtra("USERID", 0)
         }
@@ -118,6 +122,8 @@ class UserListActivity : AppCompatActivity(), IUserListActivity {
             LinearLayoutManager.VERTICAL, false
         )
         binding.recyclerView.setHasFixedSize(true)
+        listDataAdapter.clear()
+        listDataFullAdapter.clear()
         listDataFullAdapter.addAll(userList)
         listDataAdapter.addAll(listDataFullAdapter)
         adapter = UserAdapter(listDataAdapter, this@UserListActivity, userId)

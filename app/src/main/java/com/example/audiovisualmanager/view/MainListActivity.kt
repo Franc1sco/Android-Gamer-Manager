@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
@@ -47,6 +48,7 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
     // Metodo que se ejecuta al iniciar la actividad
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
         binding = ActivityMainlistBinding.inflate(layoutInflater)
         setContentView(binding.root)
         presenter.attachView(this)
@@ -56,6 +58,8 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
 
     // Metodo que carga las vistas
     private fun loadViews() {
+        Utils.disallowDarkMode(this)
+
         if(intent.hasExtra("USERID")){
             userId=intent.getIntExtra("USERID", 0)
         }
@@ -123,7 +127,7 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
                     presenter.orderList(
                         userId,
                         binding.orderList.selectedItemPosition,
-                        binding.ivOrderAsc.isVisible
+                        binding.ivOrderAsc.visibility == View.VISIBLE
                     )
                 }
             }.invokeOnCompletion { showLoadingScreen(false) }
@@ -138,7 +142,7 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
                     presenter.orderList(
                         userId,
                         binding.orderList.selectedItemPosition,
-                        binding.ivOrderAsc.isVisible
+                        binding.ivOrderAsc.visibility == View.VISIBLE
                     )
                 }
             }.invokeOnCompletion { showLoadingScreen(false) }        }
@@ -263,7 +267,7 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
         showLoadingScreen(true)
         lifecycleScope.launch(Dispatchers.Main) {
             withContext(Dispatchers.IO) {
-                presenter.orderList(userId, position, binding.ivOrderAsc.isVisible)
+                presenter.orderList(userId, position, binding.ivOrderAsc.visibility == View.VISIBLE)
             }
         }.invokeOnCompletion { showLoadingScreen(false) }
     }
@@ -273,7 +277,8 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
         showLoadingScreen(true)
         lifecycleScope.launch(Dispatchers.Main) {
             withContext(Dispatchers.IO) {
-                presenter.orderList(userId, Constants.ITEM_NOMBRE, binding.ivOrderAsc.isVisible)
+                presenter.orderList(userId, Constants.ITEM_NOMBRE,
+                    binding.ivOrderAsc.visibility == View.VISIBLE)
             }
         }.invokeOnCompletion {
             showLoadingScreen(false)
@@ -356,6 +361,8 @@ class MainListActivity : AppCompatActivity(), IMainListActivity {
     override fun applyOrderOnView(gameList: ArrayList<Game>) {
         binding.recyclerView.setHasFixedSize(true)
 
+        listDataAdapter.clear()
+        listDataFullAdapter.clear()
         listDataFullAdapter.addAll(gameList)
         listDataAdapter.addAll(listDataFullAdapter)
 

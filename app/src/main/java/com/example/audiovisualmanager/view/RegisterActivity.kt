@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
 import android.view.View
+import android.view.Window
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -26,6 +27,7 @@ class RegisterActivity : AppCompatActivity(), IRegisterActivity {
     // metodo que se ejecuta al iniciar la actividad
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
         binding = RegisterActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
         presenter.attachView(this)
@@ -35,6 +37,8 @@ class RegisterActivity : AppCompatActivity(), IRegisterActivity {
 
     // metodo que carga las vistas donde sse fija los listeners y los datos de los campos
     private fun loadViews() {
+        Utils.disallowDarkMode(this)
+
         binding.buttonDoRegister.setOnClickListener {
             val name = binding.editTextUserRegister.text.toString()
             val pass = binding.editTextPasswordRegister.text.toString()

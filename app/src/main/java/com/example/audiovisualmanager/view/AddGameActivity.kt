@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.TextView
@@ -37,6 +38,7 @@ class AddGameActivity: AppCompatActivity(), IAddGameActivity {
     // Método donde se inicia la actividad
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
         binding = AddgameActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
         presenter.attachView(this)
@@ -46,6 +48,8 @@ class AddGameActivity: AppCompatActivity(), IAddGameActivity {
 
     // Método que carga las vistas
     private fun loadViews() {
+        Utils.disallowDarkMode(this)
+
         if(intent.hasExtra("USERID")) {
             userId=intent.getIntExtra("USERID", 0)
         }

@@ -8,7 +8,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#F44336"
+        android:background="#000000"
         android:orientation="horizontal"
         android:padding="8dp"
         tools:showIn="@layout/activity_main">
@@ -17,6 +17,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
+            android:textStyle="bold|italic"
+            android:textColor="@color/white"
             android:textSize="40dp"
             android:text="Editar Usuario"/>
     </LinearLayout>
@@ -111,6 +113,7 @@
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
             android:layout_marginTop="8dp"
+            android:textStyle="bold|italic"
             android:text="Ver Usuarios"
             android:layout_gravity="center"
             android:textColor="@color/white"
@@ -128,6 +131,7 @@
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
             android:layout_marginTop="8dp"
+            android:textStyle="bold|italic"
             android:text="Actualizar Privacidad"
             android:textColor="@color/white"
             android:textSize="20sp"
@@ -142,6 +146,7 @@
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
             android:layout_marginTop="8dp"
+            android:textStyle="bold|italic"
             android:text="Actualizar Contraseña"
             android:textColor="@color/white"
             android:textSize="20sp"

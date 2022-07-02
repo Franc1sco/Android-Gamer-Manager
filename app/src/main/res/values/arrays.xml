@@ -42,13 +42,13 @@
         <item>SNES</item>
     </string-array>
     <string-array name="add_game_array_status">
-        <item>Status</item>
+        <item>Estado</item>
         <item>Pendiente</item>
         <item>En proceso</item>
         <item>Finalizado</item>
     </string-array>
     <string-array name="main_list_array_status">
-        <item>Status</item>
+        <item>Estado</item>
         <item>Todos</item>
         <item>Pendiente</item>
         <item>En proceso</item>

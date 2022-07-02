@@ -1,6 +1,7 @@
 package com.example.audiovisualmanager.helper
 
 import android.content.Context
+import android.content.res.Configuration
 import android.widget.Toast
 import com.example.audiovisualmanager.R
 import com.example.audiovisualmanager.database.MysqlManager
@@ -25,5 +26,10 @@ object Utils {
                 showMessage(context, context.getString(R.string.connection_reconnect))
             }
         }
+    }
+
+    fun disallowDarkMode(context: Context) {
+        context.resources.configuration.uiMode =
+            context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK.inv()
     }
 }

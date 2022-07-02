@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#F44336"
+    android:background="#000000"
     android:orientation="horizontal"
     android:padding="8dp"
     tools:showIn="@layout/activity_main">
@@ -11,9 +11,11 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:textColor="@color/white"
+        android:fontFamily="@font/impact"
         android:gravity="center"
         android:textSize="40dp"
-        android:text="Pantalla de Login"/>
+        android:text="Gamer Manager"/>
 
 
 </LinearLayout>

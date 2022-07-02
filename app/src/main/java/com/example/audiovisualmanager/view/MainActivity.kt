@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
 import android.view.View
+import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.audiovisualmanager.R
@@ -25,6 +26,7 @@ class MainActivity : AppCompatActivity(), IMainActivity {
     // Metodo que se ejecuta al iniciarse la actividad
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         presenter.attachView(this)
@@ -34,6 +36,7 @@ class MainActivity : AppCompatActivity(), IMainActivity {
 
     // metodo que carga los views
     private fun loadViews() {
+        Utils.disallowDarkMode(this)
         getSavedSession()
         getDatabaseConnection()
         setupListeners()

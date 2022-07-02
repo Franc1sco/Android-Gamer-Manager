@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
 import android.view.View
+import android.view.Window
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -27,6 +28,7 @@ class EditUserActivity: AppCompatActivity(), IEditUserActivity {
     // metodo que se ejecuta al iniciar la actividad
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
         binding = EdituserActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
         presenter.attachView(this)
@@ -43,6 +45,7 @@ class EditUserActivity: AppCompatActivity(), IEditUserActivity {
 
     // Método que carga las vistas de la actividad
     private fun loadViews() {
+        Utils.disallowDarkMode(this)
         setupPrivateSpinner()
         if(intent.hasExtra("USERID")){
             userId=intent.getIntExtra("USERID", 0)

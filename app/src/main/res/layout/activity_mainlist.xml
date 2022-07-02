@@ -9,7 +9,7 @@
         android:id="@+id/clTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#F44336"
+        android:background="#000000"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,7 +21,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="Lista de Videojuegos"
+            android:text="Videojuegos"
+            android:textStyle="bold|italic"
+            android:textColor="@color/white"
             android:textSize="40dp"
             app:layout_constraintEnd_toEndOf="@id/clTitle"
             app:layout_constraintStart_toStartOf="@id/clTitle"
@@ -29,16 +31,17 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clSubTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#F44336"
+        android:background="#ababab"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/clTitle"
-        >
+        app:layout_constraintTop_toBottomOf="@id/clTitle">
 
         <Spinner
             android:id="@+id/status_list"
@@ -54,27 +57,25 @@
             android:drawSelectorOnTop="true"
             app:layout_constraintStart_toEndOf="@id/status_list"
             app:layout_constraintTop_toTopOf="@id/clSubTitle" />
+
         <ImageView
             android:id="@+id/ivOrderDesc"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/ic_baseline_arrow_downward_48"
-            app:layout_constraintStart_toEndOf="@+id/order_list"
+            android:src="@drawable/ic_arrow_down"
             app:layout_constraintBottom_toBottomOf="@id/clSubTitle"
-            />
+            app:layout_constraintStart_toEndOf="@+id/order_list" />
+
         <ImageView
             android:id="@+id/ivOrderAsc"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/ic_baseline_arrow_upward_48"
-            app:layout_constraintStart_toEndOf="@+id/order_list"
-            app:layout_constraintBottom_toBottomOf="@id/clSubTitle"
+            android:src="@drawable/ic_arrow_up"
             android:visibility="gone"
-            />
+            app:layout_constraintBottom_toBottomOf="@id/clSubTitle"
+            app:layout_constraintStart_toEndOf="@+id/order_list" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clEnd"
@@ -119,7 +120,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:layout_marginRight="16dp"
-        android:backgroundTint="#F44336"
+        android:backgroundTint="#ababab"
         android:src="@drawable/ic_sharp_account_circle_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
@@ -130,7 +131,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"
-        android:backgroundTint="#F44336"
+        android:backgroundTint="#ababab"
         android:src="@drawable/ic_baseline_plus_one_24"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
@@ -140,7 +141,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:layout_marginRight="16dp"
-        android:backgroundTint="#F44336"
+        android:backgroundTint="#ababab"
         app:layout_constraintEnd_toEndOf="parent"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent" />
