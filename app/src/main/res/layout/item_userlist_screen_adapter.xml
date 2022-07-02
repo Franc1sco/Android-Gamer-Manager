@@ -7,8 +7,8 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/item_cv_main_marginStartEnd"
-        android:layout_marginEnd="@dimen/item_cv_main_marginStartEnd"
+        android:layout_marginStart="@dimen/item_cv_marginStartEnd"
+        android:layout_marginEnd="@dimen/item_cv_marginStartEnd"
         android:background="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

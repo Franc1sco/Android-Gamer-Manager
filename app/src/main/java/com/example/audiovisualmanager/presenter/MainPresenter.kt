@@ -34,6 +34,7 @@ class MainPresenter : IMainPresenter {
     override suspend fun isValidUser(user: String, password: String) {
         val isValidUser = dbHandler.isValidUser(user, password)
         if (isValidUser == null) {
+            // si hay un error en la base de datos se muestra un mensaje de error
             withContext(Dispatchers.Main) {
                 view?.connectionError()
             }

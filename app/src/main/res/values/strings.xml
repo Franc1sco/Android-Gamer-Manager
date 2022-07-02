@@ -32,4 +32,7 @@
     <string name="you_are_follow">Le sigues</string>
     <string name="connection_reconnect">Conexión reestablecida</string>
     <string name="select_points">Por favor selecciona una valoración</string>
+    <string name="platform">Plataforma: %1$s</string>
+    <string name="genre">Género: %1$s</string>
+    <string name="company">Compañia: %1$s</string>
 </resources>

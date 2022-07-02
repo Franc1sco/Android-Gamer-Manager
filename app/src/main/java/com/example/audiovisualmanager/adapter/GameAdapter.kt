@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.audiovisualmanager.R
 import com.example.audiovisualmanager.view.AddGameActivity
 import com.example.audiovisualmanager.databinding.ItemMainScreenAdapterBinding
 import com.example.audiovisualmanager.model.Game
@@ -27,9 +28,9 @@ class GameAdapter(private var listData: ArrayList<Game>, var context: Context) :
         val game: Game = listData[position]
         holder.itemListBinding.tvName.text = game.name
         holder.itemListBinding.tvStatus.text = game.status
-        holder.itemListBinding.tvPlatform.text = "Plataforma: " + game.platform
-        holder.itemListBinding.tvGenre.text = "Género: " + game.genre
-        holder.itemListBinding.tvCompany.text = "Compañía: " + game.company
+        holder.itemListBinding.tvPlatform.text = context.getString(R.string.platform, game.platform)
+        holder.itemListBinding.tvGenre.text = context.getString(R.string.genre, game.genre)
+        holder.itemListBinding.tvCompany.text = context.getString(R.string.company, game.company)
         if (game.image.isNullOrEmpty().not()) Glide.with(context).load(game.image).into(holder.itemListBinding.ivGameImage)
 
         setupRate(holder, game.valoration)

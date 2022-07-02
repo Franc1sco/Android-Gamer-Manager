@@ -70,31 +70,33 @@ class MainListPresenter : IMainListPresenter {
         when (orderBy) {
             Constants.ITEM_NOMBRE, 0 -> {
                 // si el ordenamiento es por nombre, se obtiene la lista de juegos ordenada por nombre
-                gamesList = dbHandler.getGamesPendingByUserid(userId, "name", ascOrder)
+                gamesList = dbHandler.getGamesByUser(userId, "name", ascOrder)
             }
             Constants.ITEM_PLATAFORMA -> {
                 // si el ordenamiento es por plataforma, se obtiene la lista de juegos ordenada por plataforma
-                gamesList = dbHandler.getGamesPendingByUserid(userId, "platform", ascOrder)
+                gamesList = dbHandler.getGamesByUser(userId, "platform", ascOrder)
             }
             Constants.ITEM_COMPANY -> {
                 // si el ordenamiento es por compañia, se obtiene la lista de juegos ordenada por compañia
-                gamesList = dbHandler.getGamesPendingByUserid(userId, "company", ascOrder)
+                gamesList = dbHandler.getGamesByUser(userId, "company", ascOrder)
             }
             Constants.ITEM_GENERO -> {
                 // si el ordenamiento es por genero, se obtiene la lista de juegos ordenada por genero
-                gamesList = dbHandler.getGamesPendingByUserid(userId, "genre", ascOrder)
+                gamesList = dbHandler.getGamesByUser(userId, "genre", ascOrder)
             }
             Constants.ITEM_VALORACION -> {
                 // si el ordenamiento es por valoracion, se obtiene la lista de juegos ordenada por valoracion
-                gamesList = dbHandler.getGamesPendingByUserid(userId, "valoration", ascOrder)
+                gamesList = dbHandler.getGamesByUser(userId, "valoration", ascOrder)
             }
         }
+        // volviendo al hilo principal se muestra el mensaje que corresponda
         withContext(Dispatchers.Main) {
             if (gamesList == null) {
+                // si hay error al obtener la lista de juegos, se muestra un mensaje de error
                 view?.connectionError()
                 return@withContext
             }
-            // se muestra la lista de juegos ordenada
+            // se muestra la lista de juegos ordenada en la vista
             view?.applyOrderOnView(gamesList)
         }
     }
@@ -104,6 +106,7 @@ class MainListPresenter : IMainListPresenter {
         dbHandler.deleteGame(gameId)
     }
 
+    // Metodo para que un usuario deje de seguir a otro usuario
     override suspend fun unfollowBy(userId: Int, viewerId: Int) {
         val noError = dbHandler.unfollowBy(userId, viewerId)
         withContext(Dispatchers.Main) {
@@ -116,6 +119,7 @@ class MainListPresenter : IMainListPresenter {
         }
     }
 
+    // Metodo para agregar que un usuario siga a otro usuario
     override suspend fun followBy(userId: Int, viewerId: Int) {
         val noError = dbHandler.followBy(userId, viewerId)
         withContext(Dispatchers.Main) {
@@ -123,7 +127,6 @@ class MainListPresenter : IMainListPresenter {
                 view?.connectionError()
                 return@withContext
             }
-            // se muestra la lista de juegos ordenada
             view?.followStatusChanged(true)
         }
     }

@@ -7,8 +7,8 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/item_cv_main_marginStartEnd"
-        android:layout_marginEnd="@dimen/item_cv_main_marginStartEnd"
+        android:layout_marginStart="@dimen/item_cv_marginStartEnd"
+        android:layout_marginEnd="@dimen/item_cv_marginStartEnd"
         android:background="@color/white"
         app:cardCornerRadius="@dimen/item_cv_corner_radius"
         app:cardUseCompatPadding="true"
@@ -27,8 +27,8 @@
 
             <ImageView
                 android:id="@+id/iv_game_image"
-                android:layout_width="@dimen/item_circular_image_size"
-                android:layout_height="@dimen/item_circular_image_size"
+                android:layout_width="@dimen/item_image_size"
+                android:layout_height="@dimen/item_image_size"
                 android:src="@mipmap/ic_launcher_round"
                 />
             <LinearLayout

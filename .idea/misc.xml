@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Github/Android-Audiovisual-Manager/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2615" />
         <entry key="..\:/Github/Android-Audiovisual-Manager/app/src/main/res/drawable/border.xml" value="0.213" />
         <entry key="..\:/Github/Android-Audiovisual-Manager/app/src/main/res/drawable/ic_baseline_arrow_downward_48.xml" value="0.107" />
         <entry key="..\:/Github/Android-Audiovisual-Manager/app/src/main/res/drawable/ic_baseline_arrow_upward_48.xml" value="0.107" />
@@ -12,6 +13,7 @@
         <entry key="..\:/Github/Android-Audiovisual-Manager/app/src/main/res/drawable/ic_baseline_plus_one_24.xml" value="0.143" />
         <entry key="..\:/Github/Android-Audiovisual-Manager/app/src/main/res/drawable/ic_baseline_star_24.xml" value="0.214" />
         <entry key="..\:/Github/Android-Audiovisual-Manager/app/src/main/res/drawable/ic_baseline_star_rate_24.xml" value="0.1475" />
+        <entry key="..\:/Github/Android-Audiovisual-Manager/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2615" />
         <entry key="..\:/Github/Android-Audiovisual-Manager/app/src/main/res/drawable/ic_sharp_account_circle_24.xml" value="0.152" />
         <entry key="..\:/Github/Android-Audiovisual-Manager/app/src/main/res/drawable/ic_unfollow.xml" value="0.143" />
         <entry key="..\:/Github/Android-Audiovisual-Manager/app/src/main/res/layout/activity_main.xml" value="0.4466666666666667" />

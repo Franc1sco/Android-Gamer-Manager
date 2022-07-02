@@ -15,6 +15,7 @@
         <activity
             android:name=".view.MainActivity"
             android:screenOrientation="portrait"
+            android:uiOptions="splitActionBarWhenNarrow"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,26 +26,31 @@
         <activity
             android:name=".view.MainListActivity"
             android:screenOrientation="portrait"
+            android:uiOptions="splitActionBarWhenNarrow"
             android:exported="true">
         </activity>
         <activity
             android:name=".view.RegisterActivity"
             android:screenOrientation="portrait"
+            android:uiOptions="splitActionBarWhenNarrow"
             android:exported="true">
         </activity>
         <activity
             android:name=".view.AddGameActivity"
             android:screenOrientation="portrait"
+            android:uiOptions="splitActionBarWhenNarrow"
             android:exported="true">
         </activity>
         <activity
             android:name=".view.EditUserActivity"
             android:screenOrientation="portrait"
+            android:uiOptions="splitActionBarWhenNarrow"
             android:exported="true">
         </activity>
         <activity
             android:name=".view.UserListActivity"
             android:screenOrientation="portrait"
+            android:uiOptions="splitActionBarWhenNarrow"
             android:exported="true">
         </activity>
     </application>

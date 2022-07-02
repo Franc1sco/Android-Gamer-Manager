@@ -231,7 +231,7 @@ class MysqlManager {
     }
 
     // Metodo para obtener la lista de juegos de un usuario y ordenarlos
-    fun getGamesPendingByUserid(userid: Int, order: String? = null, ascOrder: Boolean = true): ArrayList<Game>? {
+    fun getGamesByUser(userid: Int, order: String? = null, ascOrder: Boolean = true): ArrayList<Game>? {
         var stmt: Statement? = null
         var resultSet: ResultSet? = null
         var games: ArrayList<Game>? = null
@@ -492,11 +492,13 @@ class MysqlManager {
         try {
             stmt = conn?.createStatement()
             // actualizamos el juego en la tabla de juegos
-            var query = ("UPDATE $TABLE_GAMES SET $GAME_NAME = '${game.name}', $GAME_IMAGE = '$image', $GAME_COMPANY = '${game.company}', $GAME_GENRE = '${game.genre}' WHERE $GAMEID = ${game.id}")
+            var query = ("UPDATE $TABLE_GAMES SET $GAME_NAME = '${game.name}', $GAME_IMAGE = '$image', " +
+                    "$GAME_COMPANY = '${game.company}', $GAME_GENRE = '${game.genre}' WHERE $GAMEID = ${game.id}")
             stmt?.executeQuery(query)
 
             // actualizamos el juego en la tabla intermedia de relacion
-            query = ("UPDATE $TABLE_USERGAMES SET $GAME_STATUS = '${game.status}', $GAME_POINTS = ${game.valoration}, $GAME_PLATFORM = '${game.platform}' WHERE $GAMEID = ${game.id}")
+            query = ("UPDATE $TABLE_USERGAMES SET $GAME_STATUS = '${game.status}', $GAME_POINTS = ${game.valoration}, " +
+                    "$GAME_PLATFORM = '${game.platform}' WHERE $GAMEID = ${game.id}")
             stmt?.executeQuery(query)
 
         } catch (ex: SQLException) {
@@ -586,6 +588,7 @@ class MysqlManager {
         return false
     }
 
+    // Metodo para que un usuario deje de seguir a otro
     fun unfollowBy(userId: Int, viewerId: Int): Boolean {
         var stmt: Statement? = null
         var noError = true
@@ -608,6 +611,7 @@ class MysqlManager {
         return noError
     }
 
+    // Metodo para añadir un usuario a la lista de seguidores de otro usuario
     fun followBy(userId: Int, viewerId: Int): Boolean {
         var stmt: Statement? = null
         var noError = true
@@ -630,8 +634,11 @@ class MysqlManager {
         return noError
     }
 
+    // probamos la reconexion a la base de datos
     fun tryReconnect(): Boolean {
+        // probamos la conexion a la base de datos
         if (conn == null || conn?.isClosed == true) {
+            // si no hay conexion, la intentamos
             for (i in 0..5) {
                 if (getConnection()) return true
             }
