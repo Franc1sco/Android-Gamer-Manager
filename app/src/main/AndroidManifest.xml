@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.audiovisualmanager">
+    package="es.ilerna.gamermanager">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE " />
@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AudiovisualManager">
         <activity
-            android:name=".view.MainActivity"
+            android:name="es.ilerna.gamermanager.view.MainActivity"
             android:screenOrientation="portrait"
             android:uiOptions="splitActionBarWhenNarrow"
             android:exported="true">
@@ -24,31 +24,31 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.MainListActivity"
+            android:name="es.ilerna.gamermanager.view.MainListActivity"
             android:screenOrientation="portrait"
             android:uiOptions="splitActionBarWhenNarrow"
             android:exported="true">
         </activity>
         <activity
-            android:name=".view.RegisterActivity"
+            android:name="es.ilerna.gamermanager.view.RegisterActivity"
             android:screenOrientation="portrait"
             android:uiOptions="splitActionBarWhenNarrow"
             android:exported="true">
         </activity>
         <activity
-            android:name=".view.AddGameActivity"
+            android:name="es.ilerna.gamermanager.view.AddGameActivity"
             android:screenOrientation="portrait"
             android:uiOptions="splitActionBarWhenNarrow"
             android:exported="true">
         </activity>
         <activity
-            android:name=".view.EditUserActivity"
+            android:name="es.ilerna.gamermanager.view.EditUserActivity"
             android:screenOrientation="portrait"
             android:uiOptions="splitActionBarWhenNarrow"
             android:exported="true">
         </activity>
         <activity
-            android:name=".view.UserListActivity"
+            android:name="es.ilerna.gamermanager.view.UserListActivity"
             android:screenOrientation="portrait"
             android:uiOptions="splitActionBarWhenNarrow"
             android:exported="true">

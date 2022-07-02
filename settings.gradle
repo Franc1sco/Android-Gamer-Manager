@@ -12,5 +12,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "Audiovisual Manager"
+rootProject.name = "Gamer Manager"
 include ':app'
