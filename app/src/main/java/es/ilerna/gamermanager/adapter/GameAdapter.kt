@@ -72,9 +72,10 @@ class GameAdapter(private var listData: ArrayList<Game>, var context: Context) :
 
     // eliminamos un elemento de la lista
     fun removeAt(position: Int): Int {
+        val id = listData[position].id
         listData.removeAt(position)
         notifyItemRemoved(position)
-        return listData[position].id
+        return id
     }
 
     // cuando se notifica la edicion de un elemento hacemos llamada a otra activity para ello
