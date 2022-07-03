@@ -35,4 +35,12 @@
     <string name="platform">Plataforma: %1$s</string>
     <string name="genre">Género: %1$s</string>
     <string name="company">Compañia: %1$s</string>
+    <string name="register">Registro</string>
+    <string name="user">Usuario</string>
+    <string name="password">Contraseña</string>
+    <string name="show_password">Mostrar Contraseña</string>
+    <string name="do_register">Registrar</string>
+    <string name="save_session">Guardar Datos de Sesión</string>
+    <string name="dologin">Login</string>
+    <string name="doregister">Registrar</string>
 </resources>
